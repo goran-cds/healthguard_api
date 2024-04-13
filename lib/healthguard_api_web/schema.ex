@@ -8,7 +8,7 @@ defmodule HealthguardApiWeb.Schema do
   query do
     @desc "Get a list of all users"
     field :users, list_of(:user_type) do
-      resolve(&Resolvers.UserResolver.users/3)
+      resolve(&Resolvers.UserResolver.get_users/3)
     end
   end
 
