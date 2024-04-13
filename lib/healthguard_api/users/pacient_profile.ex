@@ -2,6 +2,7 @@ defmodule HealthguardApi.Users.PacientProfile do
   use Ecto.Schema
   import Ecto.Changeset
 
+  alias HealthguardApi.Users.MedicProfile
   alias HealthguardApi.Sensors.SensorData
   alias HealthguardApi.Users.{User, Address, Recommandation, ActivityType}
 
@@ -18,15 +19,17 @@ defmodule HealthguardApi.Users.PacientProfile do
     embeds_one :activity_type, ActivityType, on_replace: :delete
 
     belongs_to :user, User
+    belongs_to :medic_profile, MedicProfile
 
     timestamps(type: :utc_datetime)
   end
 
   @doc false
-  def changeset(pacient_profile, attrs) do
+  def changeset(pacient_profile, attrs \\ %{}) do
     pacient_profile
     |> cast(attrs, [:cnp, :age, :profession, :work_place, :allergies])
     |> cast_assoc(:user)
+    |> cast_assoc(:medic_profile)
     |> cast_embed(:address, with: &Address.changeset/2)
     |> cast_embed(:sensor_data, with: &SensorData.changeset/2)
     |> cast_embed(:recommandations, with: &Recommandation.changeset/2)

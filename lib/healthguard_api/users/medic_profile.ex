@@ -2,10 +2,13 @@ defmodule HealthguardApi.Users.MedicProfile do
   use Ecto.Schema
   import Ecto.Changeset
 
+  alias HealthguardApi.Users.PacientProfile
   alias HealthguardApi.Users.User
 
   schema "medic_profiles" do
     field :badge_number, :string
+
+    has_many :pacients, PacientProfile
 
     belongs_to :user, User
 

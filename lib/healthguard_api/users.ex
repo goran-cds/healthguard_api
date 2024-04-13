@@ -4,9 +4,10 @@ defmodule HealthguardApi.Users do
   """
 
   import Ecto.Query, warn: false
+  alias HealthguardApi.Users.PacientProfile
   alias HealthguardApi.Repo
 
-  alias HealthguardApi.Users.{User, UserToken, UserNotifier}
+  alias HealthguardApi.Users.{User, UserToken, UserNotifier, MedicProfile}
 
   ## Database getters
 
@@ -41,6 +42,52 @@ defmodule HealthguardApi.Users do
     |> User.changeset(attrs)
     |> Repo.insert()
   end
+
+  def get_users() do
+    from(u in User)
+    |> preload(medic_profile: [:pacients], pacient_profile: [:medic_profile])
+    |> Repo.all()
+  end
+
+  @spec create_medic_profile(User.t(), map()) ::
+          {:ok, MedicProfile.t()} | {:error, Ecto.Changeset.t()}
+  def create_medic_profile(user, attrs \\ %{}) do
+    %MedicProfile{user: user}
+    |> MedicProfile.changeset(attrs)
+    |> Repo.insert()
+  end
+
+  @spec create_pacient_profile(User.t(), map()) ::
+          {:ok, PacientProfile.t()} | {:error, Ecto.Changeset.t()}
+  def create_pacient_profile(user, attrs \\ %{}) do
+    %PacientProfile{user: user}
+    |> PacientProfile.changeset(attrs)
+    |> Repo.insert()
+  end
+
+  @spec get_pacient_profile(PacientProfile.id()) ::
+          {:ok, PacientProfile.t()} | {:error, :not_found}
+  def get_pacient_profile(pacient_profile_id) do
+    from(pp in PacientProfile, where: pp.id == ^pacient_profile_id)
+    |> preload([:medic_profile])
+    |> Repo.one()
+    |> Repo.ok_error()
+  end
+
+  @spec associate_pacient_with_medic(PacientProfile.id(), MedicProfile.t()) ::
+          {:ok, PacientProfile.t()} | {:error, Ecto.Changeset.t()}
+  def associate_pacient_with_medic(pacient_profile_id, medic_profile) do
+    with {:ok, pacient_profile} <- get_pacient_profile(pacient_profile_id),
+         {:ok, updated_pacient_profile} <-
+           pacient_profile
+           |> PacientProfile.changeset()
+           |> Ecto.Changeset.put_assoc(:medic_profile, medic_profile)
+           |> Repo.update() do
+      {:ok, updated_pacient_profile}
+    end
+  end
+
+  # -------------------------------------------------------------------------------------------------------------------------------------------------
 
   @doc """
   Returns an `%Ecto.Changeset{}` for tracking user changes.

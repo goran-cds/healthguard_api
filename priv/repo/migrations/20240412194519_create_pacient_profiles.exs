@@ -9,12 +9,13 @@ defmodule HealthguardApi.Repo.Migrations.CreatePacientProfiles do
       add :work_place, :string
       add :allergies, {:array, :string}, default: []
 
-      add :address, :jsonb, null: false
-      add :sensor_data, :jsonb, null: false, default: "[]"
-      add :recommandations, :jsonb, null: false, default: "[]"
-      add :activity_type, :jsonb, null: false
+      add :address, :jsonb
+      add :sensor_data, :jsonb, default: "[]"
+      add :recommandations, :jsonb, default: "[]"
+      add :activity_type, :jsonb
 
       add :user_id, references(:users), null: false
+      add :medic_profile_id, references(:medic_profiles)
 
       timestamps(type: :utc_datetime)
     end
