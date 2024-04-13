@@ -57,7 +57,7 @@ defmodule HealthguardApiWeb.UserRegistrationLive do
   end
 
   def handle_event("save", %{"user" => user_params}, socket) do
-    case Users.register_user(user_params) do
+    case Users.create_user(user_params) do
       {:ok, user} ->
         {:ok, _} =
           Users.deliver_user_confirmation_instructions(

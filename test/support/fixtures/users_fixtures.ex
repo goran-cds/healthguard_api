@@ -18,7 +18,7 @@ defmodule HealthguardApi.UsersFixtures do
     {:ok, user} =
       attrs
       |> valid_user_attributes()
-      |> HealthguardApi.Users.register_user()
+      |> HealthguardApi.Users.create_user()
 
     user
   end

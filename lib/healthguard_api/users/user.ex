@@ -25,7 +25,7 @@ defmodule HealthguardApi.Users.User do
   @doc """
   A user changeset for registration.
   """
-  def registration_changeset(user, attrs, opts \\ []) do
+  def changeset(user, attrs, opts \\ []) do
     user
     |> cast(attrs, [:email, :password, :first_name, :last_name, :phone_number])
     |> validate_email(opts)

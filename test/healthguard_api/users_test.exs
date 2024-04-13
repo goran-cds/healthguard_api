@@ -48,9 +48,9 @@ defmodule HealthguardApi.UsersTest do
     end
   end
 
-  describe "register_user/1" do
+  describe "create_user/1" do
     test "requires email and password to be set" do
-      {:error, changeset} = Users.register_user(%{})
+      {:error, changeset} = Users.create_user(%{})
 
       assert %{
                password: ["can't be blank"],
@@ -59,7 +59,7 @@ defmodule HealthguardApi.UsersTest do
     end
 
     test "validates email and password when given" do
-      {:error, changeset} = Users.register_user(%{email: "not valid", password: "not valid"})
+      {:error, changeset} = Users.create_user(%{email: "not valid", password: "not valid"})
 
       assert %{
                email: ["must have the @ sign and no spaces"],
@@ -69,24 +69,24 @@ defmodule HealthguardApi.UsersTest do
 
     test "validates maximum values for email and password for security" do
       too_long = String.duplicate("db", 100)
-      {:error, changeset} = Users.register_user(%{email: too_long, password: too_long})
+      {:error, changeset} = Users.create_user(%{email: too_long, password: too_long})
       assert "should be at most 160 character(s)" in errors_on(changeset).email
       assert "should be at most 72 character(s)" in errors_on(changeset).password
     end
 
     test "validates email uniqueness" do
       %{email: email} = user_fixture()
-      {:error, changeset} = Users.register_user(%{email: email})
+      {:error, changeset} = Users.create_user(%{email: email})
       assert "has already been taken" in errors_on(changeset).email
 
       # Now try with the upper cased email too, to check that email case is ignored.
-      {:error, changeset} = Users.register_user(%{email: String.upcase(email)})
+      {:error, changeset} = Users.create_user(%{email: String.upcase(email)})
       assert "has already been taken" in errors_on(changeset).email
     end
 
     test "registers users with a hashed password" do
       email = unique_user_email()
-      {:ok, user} = Users.register_user(valid_user_attributes(email: email))
+      {:ok, user} = Users.create_user(valid_user_attributes(email: email))
       assert user.email == email
       assert is_binary(user.hashed_password)
       assert is_nil(user.confirmed_at)

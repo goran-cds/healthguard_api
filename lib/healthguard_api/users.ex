@@ -27,7 +27,7 @@ defmodule HealthguardApi.Users do
   end
 
   @doc """
-  Gets a single user.
+  Gets a single user by id.
   """
   def get_user!(id), do: Repo.get!(User, id)
 
@@ -36,9 +36,9 @@ defmodule HealthguardApi.Users do
   @doc """
   Registers a user.
   """
-  def register_user(attrs) do
+  def create_user(attrs) do
     %User{}
-    |> User.registration_changeset(attrs)
+    |> User.changeset(attrs)
     |> Repo.insert()
   end
 
@@ -46,7 +46,7 @@ defmodule HealthguardApi.Users do
   Returns an `%Ecto.Changeset{}` for tracking user changes.
   """
   def change_user_registration(%User{} = user, attrs \\ %{}) do
-    User.registration_changeset(user, attrs, hash_password: false, validate_email: false)
+    User.changeset(user, attrs, hash_password: false, validate_email: false)
   end
 
   ## Settings
