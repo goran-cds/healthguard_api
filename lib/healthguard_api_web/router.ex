@@ -23,7 +23,7 @@ defmodule HealthguardApiWeb.Router do
   end
 
   scope "/api" do
-    pipe_through [:api]
+    pipe_through [:api, :admins_only]
 
     forward "/graphql", Absinthe.Plug, schema: HealthguardApiWeb.Schema
 
@@ -33,7 +33,7 @@ defmodule HealthguardApiWeb.Router do
   end
 
   scope "/", HealthguardApiWeb do
-    pipe_through [:browser]
+    pipe_through [:browser, :admins_only]
 
     get "/", PageController, :home
   end
