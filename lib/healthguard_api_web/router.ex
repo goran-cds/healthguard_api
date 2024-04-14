@@ -2,6 +2,7 @@ defmodule HealthguardApiWeb.Router do
   use HealthguardApiWeb, :router
 
   import HealthguardApiWeb.UserAuth
+  alias HealthguardApi.AdminCredentials
 
   pipeline :browser do
     plug :accepts, ["html"]
@@ -17,8 +18,12 @@ defmodule HealthguardApiWeb.Router do
     plug :accepts, ["json"]
   end
 
+  pipeline :admins_only do
+    plug :admin_basic_auth
+  end
+
   scope "/api" do
-    pipe_through :api
+    pipe_through [:api, :admins_only]
 
     forward "/graphql", Absinthe.Plug, schema: HealthguardApiWeb.Schema
 
@@ -28,7 +33,7 @@ defmodule HealthguardApiWeb.Router do
   end
 
   scope "/", HealthguardApiWeb do
-    pipe_through :browser
+    pipe_through [:browser, :admins_only]
 
     get "/", PageController, :home
   end
@@ -86,5 +91,12 @@ defmodule HealthguardApiWeb.Router do
       live "/users/confirm/:token", UserConfirmationLive, :edit
       live "/users/confirm", UserConfirmationInstructionsLive, :new
     end
+  end
+
+  defp admin_basic_auth(conn, _opts) do
+    credentials = AdminCredentials.get_credentials()
+    username = credentials.admin_username
+    password = credentials.admin_password
+    Plug.BasicAuth.basic_auth(conn, username: username, password: password)
   end
 end

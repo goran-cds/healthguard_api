@@ -65,6 +65,22 @@ if config_env() == :prod do
     ],
     secret_key_base: secret_key_base
 
+  admin_username =
+    System.get_env("ADMIN_USERNAME") ||
+      raise """
+      environment variable ADMIN_USERNAME is missing.
+      """
+
+  admin_password =
+    System.get_env("ADMIN_PASSWORD") ||
+      raise """
+      environment variable ADMIN_PASSWORD is missing.
+      """
+
+  config :healthguard_api, HealthguardApi.AdminCredentials,
+    admin_username: admin_username,
+    admin_password: admin_password
+
   # ## SSL Support
   #
   # To get SSL working, you will need to add the `https` key
