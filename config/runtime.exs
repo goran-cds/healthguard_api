@@ -77,9 +77,21 @@ if config_env() == :prod do
       environment variable ADMIN_PASSWORD is missing.
       """
 
-  config :healthguard_api, HealthguardApi.AdminCredentials,
+  production_server =
+    System.get_env("PRODUCTION_SERVER") ||
+      raise """
+      environment variable PRODUCTION_SERVER is missing.
+      """
+
+  config :healthguard_api, HealthguardApi.Credentials,
     admin_username: admin_username,
     admin_password: admin_password
+
+  # Configures CORS Plug
+  config :cors_plug,
+    origin: production_server,
+    max_age: 86400,
+    methods: ["GET", "POST"]
 
   # ## SSL Support
   #

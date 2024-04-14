@@ -1,9 +1,9 @@
-defmodule HealthguardApi.AdminCredentials do
-  @spec get_credentials() :: %{
+defmodule HealthguardApi.Credentials do
+  @spec get_admin_credentials() :: %{
           admin_username: String.t(),
           admin_password: String.t()
         }
-  def get_credentials() do
+  def get_admin_credentials() do
     config = Application.fetch_env!(:healthguard_api, __MODULE__)
 
     %{

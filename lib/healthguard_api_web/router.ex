@@ -2,7 +2,7 @@ defmodule HealthguardApiWeb.Router do
   use HealthguardApiWeb, :router
 
   import HealthguardApiWeb.UserAuth
-  alias HealthguardApi.AdminCredentials
+  alias HealthguardApi.Credentials
 
   pipeline :browser do
     plug :accepts, ["html"]
@@ -94,7 +94,7 @@ defmodule HealthguardApiWeb.Router do
   end
 
   defp admin_basic_auth(conn, _opts) do
-    credentials = AdminCredentials.get_credentials()
+    credentials = Credentials.get_admin_credentials()
     username = credentials.admin_username
     password = credentials.admin_password
     Plug.BasicAuth.basic_auth(conn, username: username, password: password)
