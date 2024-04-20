@@ -1,9 +1,20 @@
 defmodule HealthguardApiWeb.Resolvers.UserResolver do
   alias HealthguardApi.Users
 
-  def get_users(_, _, %{context: context}) do
-    IO.inspect(context)
+  def get_users(_, _, _) do
     {:ok, Users.get_users()}
+  end
+
+  def get_pacient_id(_, %{input: user_id}, _) do
+    {:ok, user} = Users.get_user(user_id)
+
+    case user.pacient_profile do
+      nil ->
+        {:ok, nil}
+
+      _ ->
+        {:ok, user.pacient_profile.id}
+    end
   end
 
   def register_pacient(_, %{input: attrs}, _) do
@@ -17,13 +28,14 @@ defmodule HealthguardApiWeb.Resolvers.UserResolver do
 
     pacient_params = %{
       cnp: attrs.pacient_profile.cnp,
-      age: attrs.pacient_profile.age
+      age: attrs.pacient_profile.age,
+      address: attrs.pacient_profile.address
     }
 
     {:ok, user} = Users.create_user(user_params)
     {:ok, _pacient_profile} = Users.create_pacient_profile(user, pacient_params)
 
-    {:ok, Users.get_user(user.id)}
+    Users.get_user(user.id)
   end
 
   def register_medic(_, %{input: attrs}, _) do
@@ -42,6 +54,15 @@ defmodule HealthguardApiWeb.Resolvers.UserResolver do
     {:ok, user} = Users.create_user(user_params)
     {:ok, _medic_profile} = Users.create_medic_profile(user, medic_params)
 
-    {:ok, Users.get_user(user.id)}
+    Users.get_user(user.id)
+  end
+
+  def add_sensor_data_to_pacient(_, %{input: attrs}, _) do
+    pacient_id = attrs.pacient_id
+    sensor_data = attrs.sensor_data
+
+    {:ok, pacient_profile} = Users.add_sensor_data_to_pacient(pacient_id, sensor_data)
+
+    Users.get_user(pacient_profile.user_id)
   end
 end

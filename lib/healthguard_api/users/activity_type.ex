@@ -11,6 +11,8 @@ defmodule HealthguardApi.Users.ActivityType do
     :cycling
   ]
 
+  def activity_types(), do: @activity_types
+
   embedded_schema do
     field :type, Ecto.Enum, values: @activity_types
   end

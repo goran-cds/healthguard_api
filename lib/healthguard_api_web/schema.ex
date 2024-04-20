@@ -10,6 +10,12 @@ defmodule HealthguardApiWeb.Schema do
     field :users, list_of(:user_type) do
       resolve(&Resolvers.UserResolver.get_users/3)
     end
+
+    @desc "Get a user's pacient id"
+    field :get_pacient_id, :id do
+      arg(:input, non_null(:id))
+      resolve(&Resolvers.UserResolver.get_pacient_id/3)
+    end
   end
 
   mutation do
@@ -29,6 +35,12 @@ defmodule HealthguardApiWeb.Schema do
     field :login_user, type: :session_type do
       arg(:input, non_null(:session_input_type))
       resolve(&Resolvers.SessionResolver.login_user/3)
+    end
+
+    @desc "Add new sensor data for pacient"
+    field :add_sensor_data_to_pacient, type: :user_type do
+      arg(:input, non_null(:add_sensor_data_input_type))
+      resolve(&Resolvers.UserResolver.add_sensor_data_to_pacient/3)
     end
   end
 end

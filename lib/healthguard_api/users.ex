@@ -4,6 +4,7 @@ defmodule HealthguardApi.Users do
   """
 
   import Ecto.Query, warn: false
+  alias HealthguardApi.Sensors.SensorData
   alias HealthguardApi.Users.PacientProfile
   alias HealthguardApi.Repo
 
@@ -88,6 +89,20 @@ defmodule HealthguardApi.Users do
            pacient_profile
            |> PacientProfile.changeset()
            |> Ecto.Changeset.put_assoc(:medic_profile, medic_profile)
+           |> Repo.update() do
+      {:ok, updated_pacient_profile}
+    end
+  end
+
+  def add_sensor_data_to_pacient(pacient_profile_id, sensor_data_attrs) do
+    with {:ok, pacient_profile} <- get_pacient_profile(pacient_profile_id),
+         sensor_data <- [
+           SensorData.changeset(%SensorData{}, sensor_data_attrs) | pacient_profile.sensor_data
+         ],
+         {:ok, updated_pacient_profile} <-
+           pacient_profile
+           |> PacientProfile.changeset()
+           |> Ecto.Changeset.put_embed(:sensor_data, sensor_data)
            |> Repo.update() do
       {:ok, updated_pacient_profile}
     end

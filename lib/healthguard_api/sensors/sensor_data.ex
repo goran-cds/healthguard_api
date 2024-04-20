@@ -10,10 +10,12 @@ defmodule HealthguardApi.Sensors.SensorData do
     :bpm
   ]
 
+  def sensor_types(), do: @sensor_types
+
   embedded_schema do
     field :type, Ecto.Enum, values: @sensor_types
     field :value, :float
-    field :date, :date
+    field :date, :utc_datetime
 
     embeds_one :activity_type, ActivityType, on_replace: :delete
   end
