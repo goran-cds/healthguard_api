@@ -83,6 +83,12 @@ if config_env() == :prod do
       environment variable PRODUCTION_SERVER is missing.
       """
 
+  guardian_key =
+    System.get_env("GUARDIAN_KEY") ||
+      raise """
+      environment variable GUARDIAN_KEY is missing.
+      """
+
   config :healthguard_api, HealthguardApi.Credentials,
     admin_username: admin_username,
     admin_password: admin_password
@@ -92,6 +98,11 @@ if config_env() == :prod do
     origin: production_server,
     max_age: 86400,
     methods: ["GET", "POST"]
+
+  # Configure Guardian
+  config :healthguard_api, HealthguardApi.Guardian,
+    issuer: "healthguard_api",
+    secret_key: guardian_key
 
   # ## SSL Support
   #
