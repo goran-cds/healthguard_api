@@ -30,7 +30,11 @@ defmodule HealthguardApi.Users do
   @doc """
   Gets a single user by id.
   """
-  def get_user!(id), do: Repo.get!(User, id)
+  def get_user(id) do
+    from(u in User, where: u.id == ^id)
+    |> preload(medic_profile: [:pacients], pacient_profile: [:medic_profile])
+    |> Repo.one()
+  end
 
   ## User registration
 
