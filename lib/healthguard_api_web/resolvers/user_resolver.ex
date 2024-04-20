@@ -1,7 +1,8 @@
 defmodule HealthguardApiWeb.Resolvers.UserResolver do
   alias HealthguardApi.Users
 
-  def get_users(_, _, _) do
+  def get_users(_, _, %{context: context}) do
+    IO.inspect(context)
     {:ok, Users.get_users()}
   end
 

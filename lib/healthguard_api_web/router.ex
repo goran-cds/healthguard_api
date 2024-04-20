@@ -16,6 +16,7 @@ defmodule HealthguardApiWeb.Router do
 
   pipeline :api do
     plug :accepts, ["json"]
+    plug HealthguardApiWeb.Plugs.Context
   end
 
   pipeline :admins_only do

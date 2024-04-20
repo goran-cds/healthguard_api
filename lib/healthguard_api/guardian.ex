@@ -8,14 +8,20 @@ defmodule HealthguardApi.Guardian do
   end
 
   def subject_for_token(_, _) do
-    {:error, :user_not_provided}
+    {:error, :sub_not_provided}
   end
 
   def resource_from_claims(%{"sub" => id} = _claims) do
-    {:ok, _user} = Users.get_user(id)
+    case Users.get_user(id) do
+      {:error, :not_found} ->
+        {:error, :resource_not_found}
+
+      {:ok, user} ->
+        {:ok, user}
+    end
   end
 
   def resource_from_claims(_claims) do
-    {:error, :subject_not_provided}
+    {:error, :sub_not_provided}
   end
 end
