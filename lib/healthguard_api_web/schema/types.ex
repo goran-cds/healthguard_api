@@ -4,4 +4,5 @@ defmodule HealthguardApiWeb.Schema.Types do
   alias HealthguardApiWeb.Schema
 
   import_types(Schema.UserType)
+  import_types(Schema.SessionType)
 end

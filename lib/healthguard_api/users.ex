@@ -16,6 +16,7 @@ defmodule HealthguardApi.Users do
   """
   def get_user_by_email(email) when is_binary(email) do
     Repo.get_by(User, email: email)
+    |> Repo.ok_error()
   end
 
   @doc """
@@ -34,6 +35,7 @@ defmodule HealthguardApi.Users do
     from(u in User, where: u.id == ^id)
     |> preload(medic_profile: [:pacients], pacient_profile: [:medic_profile])
     |> Repo.one()
+    |> Repo.ok_error()
   end
 
   ## User registration
@@ -92,6 +94,18 @@ defmodule HealthguardApi.Users do
   end
 
   # -------------------------------------------------------------------------------------------------------------------------------------------------
+
+  def authenticate_user(attrs) do
+    {:ok, user} = get_user_by_email(attrs.email)
+
+    case Argon2.verify_pass(attrs.password, user.hashed_password) do
+      true ->
+        {:ok, user}
+
+      false ->
+        {:error, :invalid_credentials}
+    end
+  end
 
   @doc """
   Returns an `%Ecto.Changeset{}` for tracking user changes.

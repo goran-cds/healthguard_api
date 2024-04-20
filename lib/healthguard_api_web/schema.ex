@@ -24,5 +24,11 @@ defmodule HealthguardApiWeb.Schema do
       arg(:input, non_null(:medic_user_input_type))
       resolve(&Resolvers.UserResolver.register_medic/3)
     end
+
+    @desc "Log in user and return JWT token"
+    field :login_user, type: :session_type do
+      arg(:input, non_null(:session_input_type))
+      resolve(&Resolvers.SessionResolver.login_user/3)
+    end
   end
 end
