@@ -9,6 +9,8 @@ defmodule HealthguardApi.Repo.Migrations.CreatePacientProfiles do
       add :work_place, :string
       add :allergies, {:array, :string}, default: []
 
+      add :state, :string, null: false
+
       add :address, :jsonb
       add :sensor_data, :jsonb, default: "[]"
       add :recommandations, :jsonb, default: "[]"

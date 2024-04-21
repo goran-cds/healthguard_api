@@ -6,12 +6,21 @@ defmodule HealthguardApi.Users.PacientProfile do
   alias HealthguardApi.Sensors.SensorData
   alias HealthguardApi.Users.{User, Address, Recommandation, ActivityType}
 
+  @pacient_states [
+    :pending,
+    :confirmed
+  ]
+
+  def pacient_states(), do: @pacient_states
+
   schema "pacient_profiles" do
     field :cnp, :string
     field :age, :integer
     field :profession, :string
     field :work_place, :string
     field :allergies, {:array, :string}, default: []
+
+    field :state, Ecto.Enum, values: @pacient_states, default: :pending
 
     embeds_one :address, Address, on_replace: :delete
     embeds_many :sensor_data, SensorData, on_replace: :delete
@@ -27,7 +36,7 @@ defmodule HealthguardApi.Users.PacientProfile do
   @doc false
   def changeset(pacient_profile, attrs \\ %{}) do
     pacient_profile
-    |> cast(attrs, [:cnp, :age, :profession, :work_place, :allergies])
+    |> cast(attrs, [:cnp, :age, :profession, :work_place, :allergies, :state])
     |> cast_assoc(:user)
     |> cast_assoc(:medic_profile)
     |> cast_embed(:address, with: &Address.changeset/2)
@@ -36,8 +45,10 @@ defmodule HealthguardApi.Users.PacientProfile do
     |> cast_embed(:activity_type, with: &ActivityType.changeset/2)
     |> validate_required([
       :cnp,
-      :age
+      :age,
+      :state
     ])
     |> validate_length(:cnp, is: 13, message: "invalid cnp")
+    |> validate_inclusion(:state, @pacient_states)
   end
 end

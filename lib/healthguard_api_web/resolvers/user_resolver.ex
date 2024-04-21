@@ -5,7 +5,11 @@ defmodule HealthguardApiWeb.Resolvers.UserResolver do
     {:ok, Users.get_users()}
   end
 
-  def get_pacient_id(_, %{input: user_id}, _) do
+  def get_user_by_id(_, %{id: id}, _) do
+    {:ok, Users.get_user(id)}
+  end
+
+  def get_pacient_id(_, %{user_id: user_id}, _) do
     {:ok, user} = Users.get_user(user_id)
 
     case user.pacient_profile do

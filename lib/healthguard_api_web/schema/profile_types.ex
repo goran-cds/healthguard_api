@@ -3,11 +3,14 @@ defmodule HealthguardApiWeb.Schema.ProfileTypes do
 
   import_types(HealthguardApiWeb.Schema.PacientProfileTypes)
 
+  alias HealthguardApi.Users.PacientProfile
+
   object :pacient_profile_type do
     field :id, :id
     field :cnp, :string
     field :age, :integer
     field :address, :address_type
+    field :state, :state_type_enum
     field :sensor_data, list_of(:sensor_data_type)
     field :recommandations, list_of(:recommandation_type)
     field :activity_type, :activity_type
@@ -34,4 +37,6 @@ defmodule HealthguardApiWeb.Schema.ProfileTypes do
     field :pacient_id, :id
     field :sensor_data, :sensor_data_input_type
   end
+
+  enum(:state_type_enum, values: PacientProfile.pacient_states())
 end

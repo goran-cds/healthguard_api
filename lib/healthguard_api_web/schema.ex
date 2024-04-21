@@ -14,9 +14,15 @@ defmodule HealthguardApiWeb.Schema do
       resolve(&Resolvers.UserResolver.get_users/3)
     end
 
+    @desc "Get a user by id"
+    field :get_user, :user_type do
+      arg(:id, non_null(:id))
+      resolve(&Resolvers.UserResolver.get_user_by_id/3)
+    end
+
     @desc "Get a user's pacient id"
     field :get_pacient_id, :id do
-      arg(:input, non_null(:id))
+      arg(:user_id, non_null(:id))
       resolve(&Resolvers.UserResolver.get_pacient_id/3)
     end
 
