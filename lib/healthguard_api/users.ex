@@ -108,6 +108,12 @@ defmodule HealthguardApi.Users do
     end
   end
 
+  def get_pacient_sensor_data_by_type(pacient_profile_id, sensor_type) do
+    from(pp in PacientProfile, where: pp.id == ^pacient_profile_id, select: pp.sensor_data)
+    |> Repo.one()
+    |> Enum.filter(fn sensor_data -> sensor_data.type == sensor_type end)
+  end
+
   # -------------------------------------------------------------------------------------------------------------------------------------------------
 
   def authenticate_user(attrs) do

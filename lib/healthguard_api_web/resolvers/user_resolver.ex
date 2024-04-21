@@ -17,7 +17,7 @@ defmodule HealthguardApiWeb.Resolvers.UserResolver do
     end
   end
 
-  def get_pacient_last_sensor_data(_, %{input: user_id}, _) do
+  def get_pacient_last_sensor_data(_, %{user_id: user_id, sensor_type: sensor_type}, _) do
     {:ok, user} = Users.get_user(user_id)
 
     case user.pacient_profile do
@@ -27,7 +27,21 @@ defmodule HealthguardApiWeb.Resolvers.UserResolver do
       _ ->
         if user.pacient_profile.sensor_data == [],
           do: {:ok, nil},
-          else: {:ok, user.pacient_profile.sensor_data |> hd}
+          else:
+            {:ok,
+             Users.get_pacient_sensor_data_by_type(user.pacient_profile.id, sensor_type) |> hd}
+    end
+  end
+
+  def get_pacient_sensor_data_by_type(_, %{user_id: user_id, sensor_type: sensor_type}, _) do
+    {:ok, user} = Users.get_user(user_id)
+
+    case user.pacient_profile do
+      nil ->
+        {:ok, nil}
+
+      _ ->
+        {:ok, Users.get_pacient_sensor_data_by_type(user.pacient_profile.id, sensor_type)}
     end
   end
 

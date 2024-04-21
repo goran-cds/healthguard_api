@@ -7,7 +7,6 @@ defmodule HealthguardApiWeb.Schema do
 
   # add medic's email to pacient registration
   # add pacient :state in schema, values: [:pending, :confirmed]
-  # create query to get last sensor data
   # create query to get last / ongoing activity
   # create a query to get all values from a specified sensor type
 
@@ -23,10 +22,18 @@ defmodule HealthguardApiWeb.Schema do
       resolve(&Resolvers.UserResolver.get_pacient_id/3)
     end
 
-    @desc "Get a pacient's last read sensor data"
+    @desc "Get a pacient's last read sensor data for a type"
     field :get_pacient_last_sensor_data, :sensor_data_type do
-      arg(:input, non_null(:id))
+      arg(:user_id, non_null(:id))
+      arg(:sensor_type, non_null(:sensor_type_enum))
       resolve(&Resolvers.UserResolver.get_pacient_last_sensor_data/3)
+    end
+
+    @desc "Get a pacient's sensor data by type"
+    field :get_pacient_sensor_data_by_type, list_of(:sensor_data_type) do
+      arg(:user_id, non_null(:id))
+      arg(:sensor_type, non_null(:sensor_type_enum))
+      resolve(&Resolvers.UserResolver.get_pacient_sensor_data_by_type/3)
     end
   end
 
