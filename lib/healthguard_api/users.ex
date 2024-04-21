@@ -16,7 +16,9 @@ defmodule HealthguardApi.Users do
   Gets a user by email.
   """
   def get_user_by_email(email) when is_binary(email) do
-    Repo.get_by(User, email: email)
+    from(u in User, where: u.email == ^email)
+    |> preload(medic_profile: [:pacients], pacient_profile: [:medic_profile])
+    |> Repo.one()
     |> Repo.ok_error()
   end
 
@@ -77,6 +79,14 @@ defmodule HealthguardApi.Users do
   def get_pacient_profile(pacient_profile_id) do
     from(pp in PacientProfile, where: pp.id == ^pacient_profile_id)
     |> preload([:medic_profile])
+    |> Repo.one()
+    |> Repo.ok_error()
+  end
+
+  @spec get_medic_profile(MedicProfile.id()) ::
+          {:ok, MedicProfile.t()} | {:error, :not_found}
+  def get_medic_profile(medic_profile_id) do
+    from(mp in MedicProfile, where: mp.id == ^medic_profile_id)
     |> Repo.one()
     |> Repo.ok_error()
   end

@@ -5,7 +5,6 @@ defmodule HealthguardApiWeb.Schema do
 
   import_types(HealthguardApiWeb.Schema.Types)
 
-  # add medic's email to pacient registration
   # add pacient :state in schema, values: [:pending, :confirmed]
   # create query to get last / ongoing activity
 

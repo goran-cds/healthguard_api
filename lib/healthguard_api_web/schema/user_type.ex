@@ -20,6 +20,7 @@ defmodule HealthguardApiWeb.Schema.UserType do
     field :last_name, non_null(:string)
     field :phone_number, non_null(:string)
     field :pacient_profile, :pacient_profile_input_type
+    field :medic_email, non_null(:string)
   end
 
   input_object :medic_user_input_type do

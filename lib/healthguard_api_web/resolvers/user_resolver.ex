@@ -60,10 +60,15 @@ defmodule HealthguardApiWeb.Resolvers.UserResolver do
       address: attrs.pacient_profile.address
     }
 
-    {:ok, user} = Users.create_user(user_params)
-    {:ok, _pacient_profile} = Users.create_pacient_profile(user, pacient_params)
+    medic_email = attrs.medic_email
 
-    Users.get_user(user.id)
+    with {:ok, user} <- Users.create_user(user_params),
+         {:ok, pacient_profile} <- Users.create_pacient_profile(user, pacient_params),
+         {:ok, medic_user} <- Users.get_user_by_email(medic_email),
+         {:ok, medic_profile} <- Users.get_medic_profile(medic_user.medic_profile.id),
+         {:ok, _} <- Users.associate_pacient_with_medic(pacient_profile.id, medic_profile) do
+      Users.get_user(user.id)
+    end
   end
 
   def register_medic(_, %{input: attrs}, _) do
