@@ -8,7 +8,6 @@ defmodule HealthguardApiWeb.Schema do
   # add medic's email to pacient registration
   # add pacient :state in schema, values: [:pending, :confirmed]
   # create query to get last / ongoing activity
-  # create a query to get all values from a specified sensor type
 
   query do
     @desc "Get a list of all users"
