@@ -5,6 +5,12 @@ defmodule HealthguardApiWeb.Schema do
 
   import_types(HealthguardApiWeb.Schema.Types)
 
+  # add medic's email to pacient registration
+  # add pacient :state in schema, values: [:pending, :confirmed]
+  # create query to get last sensor data
+  # create query to get last / ongoing activity
+  # create a query to get all values from a specified sensor type
+
   query do
     @desc "Get a list of all users"
     field :users, list_of(:user_type) do
@@ -15,6 +21,12 @@ defmodule HealthguardApiWeb.Schema do
     field :get_pacient_id, :id do
       arg(:input, non_null(:id))
       resolve(&Resolvers.UserResolver.get_pacient_id/3)
+    end
+
+    @desc "Get a pacient's last read sensor data"
+    field :get_pacient_last_sensor_data, :sensor_data_type do
+      arg(:input, non_null(:id))
+      resolve(&Resolvers.UserResolver.get_pacient_last_sensor_data/3)
     end
   end
 

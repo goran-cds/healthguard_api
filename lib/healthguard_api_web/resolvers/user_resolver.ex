@@ -17,6 +17,20 @@ defmodule HealthguardApiWeb.Resolvers.UserResolver do
     end
   end
 
+  def get_pacient_last_sensor_data(_, %{input: user_id}, _) do
+    {:ok, user} = Users.get_user(user_id)
+
+    case user.pacient_profile do
+      nil ->
+        {:ok, nil}
+
+      _ ->
+        if user.pacient_profile.sensor_data == [],
+          do: {:ok, nil},
+          else: {:ok, user.pacient_profile.sensor_data |> hd}
+    end
+  end
+
   def register_pacient(_, %{input: attrs}, _) do
     user_params = %{
       email: attrs.email,
