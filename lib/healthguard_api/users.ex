@@ -104,15 +104,50 @@ defmodule HealthguardApi.Users do
     end
   end
 
-  def add_sensor_data_to_pacient(pacient_profile_id, sensor_data_attrs) do
-    with {:ok, pacient_profile} <- get_pacient_profile(pacient_profile_id),
-         sensor_data <- [
-           SensorData.changeset(%SensorData{}, sensor_data_attrs) | pacient_profile.sensor_data
-         ],
+  def add_sensor_data_to_pacient(user_id, sensor_data_attrs) do
+    temperature = %{
+      type: :temperature,
+      value: [sensor_data_attrs.temperature],
+      date: DateTime.utc_now()
+    }
+
+    bpm = %{
+      type: :bpm,
+      value: [sensor_data_attrs.bpm],
+      date: DateTime.utc_now()
+    }
+
+    humidity = %{
+      type: :humidity,
+      value: [sensor_data_attrs.humidity],
+      date: DateTime.utc_now()
+    }
+
+    ecg = %{
+      type: :ecg,
+      value: sensor_data_attrs.ecg,
+      date: DateTime.utc_now()
+    }
+
+    sensor_data = [bpm, ecg, temperature, humidity]
+
+    add_sensor_data = fn pacient_profile, sensor_data ->
+      new_data =
+        sensor_data
+        |> Enum.map(fn data ->
+          SensorData.changeset(%SensorData{}, data)
+        end)
+
+      new_data ++ pacient_profile.sensor_data
+    end
+
+    with {:ok, user} <- get_user(user_id),
+         {:ok, pacient_profile} <- get_pacient_profile(user.pacient_profile.id),
+         sensor_data_list <- add_sensor_data.(pacient_profile, sensor_data),
          {:ok, updated_pacient_profile} <-
            pacient_profile
            |> PacientProfile.changeset()
-           |> Ecto.Changeset.put_embed(:sensor_data, sensor_data)
+           |> Ecto.Changeset.put_embed(:sensor_data, sensor_data_list)
            |> Repo.update() do
       {:ok, updated_pacient_profile}
     end

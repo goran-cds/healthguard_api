@@ -15,7 +15,7 @@ defmodule HealthguardApiWeb.Schema.PacientProfileTypes do
 
   object :sensor_data_type do
     field :type, :sensor_type_enum
-    field :value, :float
+    field :value, list_of(:float)
     field :date, :datetime
   end
 

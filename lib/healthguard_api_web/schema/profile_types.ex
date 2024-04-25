@@ -34,8 +34,11 @@ defmodule HealthguardApiWeb.Schema.ProfileTypes do
   end
 
   input_object :add_sensor_data_input_type do
-    field :pacient_id, :id
-    field :sensor_data, :sensor_data_input_type
+    field :user_id, :id
+    field :temperature, :float
+    field :bpm, :float
+    field :humidity, :float
+    field :ecg, list_of(:float)
   end
 
   enum(:state_type_enum, values: PacientProfile.pacient_states())

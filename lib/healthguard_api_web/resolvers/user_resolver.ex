@@ -95,10 +95,16 @@ defmodule HealthguardApiWeb.Resolvers.UserResolver do
   end
 
   def add_sensor_data_to_pacient(_, %{input: attrs}, _) do
-    pacient_id = attrs.pacient_id
-    sensor_data = attrs.sensor_data
+    user_id = attrs.user_id
 
-    {:ok, pacient_profile} = Users.add_sensor_data_to_pacient(pacient_id, sensor_data)
+    sensor_data = %{
+      bpm: attrs.bpm,
+      ecg: attrs.ecg,
+      temperature: attrs.temperature,
+      humidity: attrs.humidity
+    }
+
+    {:ok, pacient_profile} = Users.add_sensor_data_to_pacient(user_id, sensor_data)
 
     Users.get_user(pacient_profile.user_id)
   end
