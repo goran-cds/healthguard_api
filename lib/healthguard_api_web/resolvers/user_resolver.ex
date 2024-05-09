@@ -9,6 +9,10 @@ defmodule HealthguardApiWeb.Resolvers.UserResolver do
     {:ok, Users.get_user(id)}
   end
 
+  def get_user_by_token(_, %{token: token}, _) do
+    {:ok, Users.get_user_by_token(token)}
+  end
+
   def get_pacient_id(_, %{user_id: user_id}, _) do
     {:ok, user} = Users.get_user(user_id)
 

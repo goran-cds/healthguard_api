@@ -19,6 +19,12 @@ defmodule HealthguardApiWeb.Schema do
       resolve(&Resolvers.UserResolver.get_user_by_id/3)
     end
 
+    @desc "Get a user by session token"
+    field :get_user_by_token, :user_type do
+      arg(:token, non_null(:string))
+      resolve(&Resolvers.UserResolver.get_user_by_token/3)
+    end
+
     @desc "Get a user's pacient id"
     field :get_pacient_id, :id do
       arg(:user_id, non_null(:id))

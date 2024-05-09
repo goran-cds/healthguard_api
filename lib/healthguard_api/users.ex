@@ -41,6 +41,26 @@ defmodule HealthguardApi.Users do
     |> Repo.ok_error()
   end
 
+  def get_user_by_token(token) do
+    user_token =
+      from(ut in UserToken, where: ut.token == ^token)
+      |> Repo.one()
+
+    case user_token do
+      nil ->
+        {:error, :token_not_found}
+
+      _ ->
+        {:ok, user} = get_user(user_token.user_id)
+        user
+    end
+  end
+
+  def create_user_token(user_id, token) do
+    %UserToken{user_id: user_id, token: token, context: "session"}
+    |> Repo.insert()
+  end
+
   ## User registration
 
   @doc """
@@ -58,24 +78,18 @@ defmodule HealthguardApi.Users do
     |> Repo.all()
   end
 
-  @spec create_medic_profile(User.t(), map()) ::
-          {:ok, MedicProfile.t()} | {:error, Ecto.Changeset.t()}
   def create_medic_profile(user, attrs \\ %{}) do
     %MedicProfile{user: user}
     |> MedicProfile.changeset(attrs)
     |> Repo.insert()
   end
 
-  @spec create_pacient_profile(User.t(), map()) ::
-          {:ok, PacientProfile.t()} | {:error, Ecto.Changeset.t()}
   def create_pacient_profile(user, attrs \\ %{}) do
     %PacientProfile{user: user}
     |> PacientProfile.changeset(attrs)
     |> Repo.insert()
   end
 
-  @spec get_pacient_profile(PacientProfile.id()) ::
-          {:ok, PacientProfile.t()} | {:error, :not_found}
   def get_pacient_profile(pacient_profile_id) do
     from(pp in PacientProfile, where: pp.id == ^pacient_profile_id)
     |> preload([:medic_profile])
@@ -83,16 +97,12 @@ defmodule HealthguardApi.Users do
     |> Repo.ok_error()
   end
 
-  @spec get_medic_profile(MedicProfile.id()) ::
-          {:ok, MedicProfile.t()} | {:error, :not_found}
   def get_medic_profile(medic_profile_id) do
     from(mp in MedicProfile, where: mp.id == ^medic_profile_id)
     |> Repo.one()
     |> Repo.ok_error()
   end
 
-  @spec associate_pacient_with_medic(PacientProfile.id(), MedicProfile.t()) ::
-          {:ok, PacientProfile.t()} | {:error, Ecto.Changeset.t()}
   def associate_pacient_with_medic(pacient_profile_id, medic_profile) do
     with {:ok, pacient_profile} <- get_pacient_profile(pacient_profile_id),
          {:ok, updated_pacient_profile} <-
