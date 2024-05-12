@@ -57,5 +57,20 @@ defmodule HealthguardApiWeb.Schema.ProfileTypes do
     field :ecg, list_of(:float)
   end
 
+  input_object :update_pacient_user_input_type do
+    field :pacient_id, :id
+    field :email, :string
+    field :first_name, :string
+    field :last_name, :string
+    field :phone_number, :string
+    field :age, :integer
+    field :work_place, :string
+    field :profession, :string
+    field :country, :string
+    field :city, :string
+    field :street, :string
+    field :street_number, :integer
+  end
+
   enum(:state_type_enum, values: PacientProfile.pacient_states())
 end

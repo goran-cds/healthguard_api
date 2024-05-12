@@ -100,5 +100,11 @@ defmodule HealthguardApiWeb.Schema do
       arg(:input, non_null(:add_recommandation_input_type))
       resolve(&Resolvers.UserResolver.add_recommandation_to_pacient/3)
     end
+
+    @desc "Update a user by pacient id"
+    field :update_pacient_user, type: :user_type do
+      arg(:input, non_null(:update_pacient_user_input_type))
+      resolve(&Resolvers.UserResolver.update_pacient_user/3)
+    end
   end
 end

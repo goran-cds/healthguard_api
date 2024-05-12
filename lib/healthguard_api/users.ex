@@ -83,6 +83,18 @@ defmodule HealthguardApi.Users do
     |> Repo.insert()
   end
 
+  def update_user(user, attrs) do
+    user
+    |> User.registered_changeset(attrs)
+    |> Repo.update()
+  end
+
+  def update_pacient_profile(pacient_profile, attrs) do
+    pacient_profile
+    |> PacientProfile.changeset(attrs)
+    |> Repo.update()
+  end
+
   def get_users() do
     from(u in User)
     |> preload(medic_profile: [:pacients], pacient_profile: [:medic_profile])

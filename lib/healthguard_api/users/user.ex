@@ -43,6 +43,23 @@ defmodule HealthguardApi.Users.User do
     |> validate_length(:phone_number, is: 10, message: "must be 10 digits")
   end
 
+  def registered_changeset(user, attrs, opts \\ []) do
+    user
+    |> cast(attrs, [:email, :first_name, :last_name, :phone_number])
+    |> validate_email(opts)
+    |> validate_length(:first_name,
+      min: 2,
+      max: 100,
+      message: "must be between 2 and 100 characters"
+    )
+    |> validate_length(:last_name,
+      min: 2,
+      max: 100,
+      message: "must be between 2 and 100 characters"
+    )
+    |> validate_length(:phone_number, is: 10, message: "must be 10 digits")
+  end
+
   defp validate_email(changeset, opts) do
     changeset
     |> validate_required([:email])

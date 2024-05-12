@@ -149,4 +149,35 @@ defmodule HealthguardApiWeb.Resolvers.UserResolver do
     {:ok, _user} = Users.delete_user_by_pacient_profile_id(pacient_id)
     {:ok, "Successfully deleted"}
   end
+
+  def update_pacient_user(_, %{input: input}, _) do
+    pacient_profile_id = input.pacient_id
+
+    user_attrs = %{
+      email: input.email,
+      first_name: input.first_name,
+      last_name: input.last_name,
+      phone_number: input.phone_number
+    }
+
+    pacient_profile_attrs = %{
+      age: input.age,
+      work_place: input.work_place,
+      profession: input.profession,
+      address: %{
+        country: input.country,
+        city: input.city,
+        street: input.street,
+        street_number: input.street_number
+      }
+    }
+
+    with {:ok, user} <- Users.get_user_by_pacient_id(pacient_profile_id),
+         {:ok, pacient_profile} <- Users.get_pacient_profile(pacient_profile_id),
+         {:ok, _updated_user} <- Users.update_user(user, user_attrs),
+         {:ok, updated_pacient_profile} <-
+           Users.update_pacient_profile(pacient_profile, pacient_profile_attrs) do
+      Users.get_user(updated_pacient_profile.user_id)
+    end
+  end
 end
