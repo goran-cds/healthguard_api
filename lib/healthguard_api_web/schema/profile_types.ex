@@ -10,11 +10,25 @@ defmodule HealthguardApiWeb.Schema.ProfileTypes do
     field :cnp, :string
     field :age, :integer
     field :address, :address_type
+    field :work_place, :string
+    field :profession, :string
     field :state, :state_type_enum
     field :sensor_data, list_of(:sensor_data_type)
     field :recommandations, list_of(:recommandation_type)
     field :activity_type, :activity_type
     field :medic_profile, :medic_profile_type
+    field :inserted_at, :date
+    field :user_id, :id
+  end
+
+  object :pacient_data_type do
+    field :id, :id
+    field :first_name, :string
+    field :last_name, :string
+    field :email, :string
+    field :cnp, :string
+    field :inserted_at, :string
+    field :phone_number, :string
   end
 
   object :medic_profile_type do
@@ -26,6 +40,8 @@ defmodule HealthguardApiWeb.Schema.ProfileTypes do
   input_object :pacient_profile_input_type do
     field :cnp, non_null(:string)
     field :age, non_null(:integer)
+    field :work_place, :string
+    field :profession, :string
     field :address, :address_input_type
   end
 

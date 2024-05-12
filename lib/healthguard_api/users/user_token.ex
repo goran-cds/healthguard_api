@@ -163,7 +163,7 @@ defmodule HealthguardApi.Users.UserToken do
   Returns the token struct for the given token value and context.
   """
   def by_token_and_context_query(token, context) do
-    from UserToken, where: [token: ^token, context: ^context]
+    from ut in UserToken, where: ut.token == ^token and ut.context == ^context
   end
 
   @doc """

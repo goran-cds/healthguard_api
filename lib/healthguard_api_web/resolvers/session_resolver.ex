@@ -9,4 +9,9 @@ defmodule HealthguardApiWeb.Resolvers.SessionResolver do
       {:ok, %{token: jwt_token, user: user}}
     end
   end
+
+  def logout_user(_, %{input: attrs}, _) do
+    :ok = Users.delete_user_session_token(attrs.token)
+    {:ok, %{token: attrs.token}}
+  end
 end

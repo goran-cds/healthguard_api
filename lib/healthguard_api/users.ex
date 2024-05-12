@@ -41,6 +41,16 @@ defmodule HealthguardApi.Users do
     |> Repo.ok_error()
   end
 
+  def get_user_by_pacient_id(pacient_profile_id) do
+    User
+    |> from(as: :user)
+    |> join(:inner, [u], pp in PacientProfile, on: pp.user_id == u.id)
+    |> where([u, pp], pp.id == ^pacient_profile_id)
+    |> preload([:pacient_profile])
+    |> Repo.one()
+    |> Repo.ok_error()
+  end
+
   def get_user_by_token(token) do
     user_token =
       from(ut in UserToken, where: ut.token == ^token)
@@ -101,6 +111,27 @@ defmodule HealthguardApi.Users do
     from(mp in MedicProfile, where: mp.id == ^medic_profile_id)
     |> Repo.one()
     |> Repo.ok_error()
+  end
+
+  def get_medic_pacients(user_id) do
+    {:ok, user} =
+      from(u in User, where: u.id == ^user_id)
+      |> preload(medic_profile: [pacients: [:user]])
+      |> Repo.one()
+      |> Repo.ok_error()
+
+    user.medic_profile.pacients
+    |> Enum.map(fn pacient ->
+      %{
+        id: pacient.id,
+        first_name: pacient.user.first_name,
+        last_name: pacient.user.last_name,
+        cnp: pacient.cnp,
+        email: pacient.user.email,
+        phone_number: pacient.user.phone_number,
+        inserted_at: pacient.inserted_at
+      }
+    end)
   end
 
   def associate_pacient_with_medic(pacient_profile_id, medic_profile) do
@@ -167,6 +198,18 @@ defmodule HealthguardApi.Users do
     from(pp in PacientProfile, where: pp.id == ^pacient_profile_id, select: pp.sensor_data)
     |> Repo.one()
     |> Enum.filter(fn sensor_data -> sensor_data.type == sensor_type end)
+  end
+
+  def delete_user_by_pacient_profile_id(pacient_profile_id) do
+    {:ok, deleted_pacient_profile} =
+      from(pp in PacientProfile, where: pp.id == ^pacient_profile_id)
+      |> Repo.one()
+      |> Repo.delete()
+
+    {:ok, _deleted_user} =
+      from(u in User, where: u.id == ^deleted_pacient_profile.user_id)
+      |> Repo.one()
+      |> Repo.delete()
   end
 
   # -------------------------------------------------------------------------------------------------------------------------------------------------

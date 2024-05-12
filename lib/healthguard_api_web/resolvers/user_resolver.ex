@@ -6,11 +6,21 @@ defmodule HealthguardApiWeb.Resolvers.UserResolver do
   end
 
   def get_user_by_id(_, %{id: id}, _) do
-    {:ok, Users.get_user(id)}
+    {:ok, user} = Users.get_user(id)
+    {:ok, user}
+  end
+
+  def get_user_by_pacient_id(_, %{id: id}, _) do
+    {:ok, user} = Users.get_user_by_pacient_id(id)
+    {:ok, user}
   end
 
   def get_user_by_token(_, %{token: token}, _) do
     {:ok, Users.get_user_by_token(token)}
+  end
+
+  def get_medic_pacients(_, %{user_id: user_id}, _) do
+    {:ok, Users.get_medic_pacients(user_id)}
   end
 
   def get_pacient_id(_, %{user_id: user_id}, _) do
@@ -54,6 +64,8 @@ defmodule HealthguardApiWeb.Resolvers.UserResolver do
   end
 
   def register_pacient(_, %{input: attrs}, _) do
+    IO.inspect(attrs, label: "ATTRIBUTES")
+
     user_params = %{
       email: attrs.email,
       password: attrs.password,
@@ -65,16 +77,28 @@ defmodule HealthguardApiWeb.Resolvers.UserResolver do
     pacient_params = %{
       cnp: attrs.pacient_profile.cnp,
       age: attrs.pacient_profile.age,
-      address: attrs.pacient_profile.address
+      address: attrs.pacient_profile.address,
+      work_place: attrs.pacient_profile.work_place,
+      profession: attrs.pacient_profile.profession
     }
 
     medic_email = attrs.medic_email
 
-    with {:ok, user} <- Users.create_user(user_params),
-         {:ok, pacient_profile} <- Users.create_pacient_profile(user, pacient_params),
-         {:ok, medic_user} <- Users.get_user_by_email(medic_email),
-         {:ok, medic_profile} <- Users.get_medic_profile(medic_user.medic_profile.id),
-         {:ok, _} <- Users.associate_pacient_with_medic(pacient_profile.id, medic_profile) do
+    with {:ok, user} <- IO.inspect(Users.create_user(user_params), label: "Created user"),
+         {:ok, pacient_profile} <-
+           IO.inspect(Users.create_pacient_profile(user, pacient_params),
+             label: "Created pacient profile"
+           ),
+         {:ok, medic_user} <-
+           IO.inspect(Users.get_user_by_email(medic_email), label: "Found medic"),
+         {:ok, medic_profile} <-
+           IO.inspect(Users.get_medic_profile(medic_user.medic_profile.id),
+             label: "Found medic profile"
+           ),
+         {:ok, _} <-
+           IO.inspect(Users.associate_pacient_with_medic(pacient_profile.id, medic_profile),
+             label: "Successfully associated"
+           ) do
       Users.get_user(user.id)
     end
   end
@@ -111,5 +135,10 @@ defmodule HealthguardApiWeb.Resolvers.UserResolver do
     {:ok, pacient_profile} = Users.add_sensor_data_to_pacient(user_id, sensor_data)
 
     Users.get_user(pacient_profile.user_id)
+  end
+
+  def delete_pacient_user(_, %{pacient_id: pacient_id}, _) do
+    {:ok, _user} = Users.delete_user_by_pacient_profile_id(pacient_id)
+    {:ok, "Successfully deleted"}
   end
 end

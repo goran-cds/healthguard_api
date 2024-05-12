@@ -19,6 +19,12 @@ defmodule HealthguardApiWeb.Schema do
       resolve(&Resolvers.UserResolver.get_user_by_id/3)
     end
 
+    @desc "Get a user by pacient id"
+    field :get_user_by_pacient_id, :user_type do
+      arg(:id, non_null(:id))
+      resolve(&Resolvers.UserResolver.get_user_by_pacient_id/3)
+    end
+
     @desc "Get a user by session token"
     field :get_user_by_token, :user_type do
       arg(:token, non_null(:string))
@@ -29,6 +35,12 @@ defmodule HealthguardApiWeb.Schema do
     field :get_pacient_id, :id do
       arg(:user_id, non_null(:id))
       resolve(&Resolvers.UserResolver.get_pacient_id/3)
+    end
+
+    @desc "Get a medic's pacients data"
+    field :get_medic_pacients, list_of(:pacient_data_type) do
+      arg(:user_id, :id)
+      resolve(&Resolvers.UserResolver.get_medic_pacients/3)
     end
 
     @desc "Get a pacient's last read sensor data for a type"
@@ -65,10 +77,22 @@ defmodule HealthguardApiWeb.Schema do
       resolve(&Resolvers.SessionResolver.login_user/3)
     end
 
+    @desc "Log out user and delete JWT token"
+    field :logout_user, type: :session_delete_type do
+      arg(:input, non_null(:session_delete_input_type))
+      resolve(&Resolvers.SessionResolver.logout_user/3)
+    end
+
     @desc "Add new sensor data for pacient"
     field :add_sensor_data_to_pacient, type: :user_type do
       arg(:input, non_null(:add_sensor_data_input_type))
       resolve(&Resolvers.UserResolver.add_sensor_data_to_pacient/3)
+    end
+
+    @desc "Delete a pacient user"
+    field :delete_pacient_user, type: :string do
+      arg(:pacient_id, non_null(:id))
+      resolve(&Resolvers.UserResolver.delete_pacient_user/3)
     end
   end
 end
