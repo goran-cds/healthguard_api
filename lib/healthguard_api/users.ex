@@ -4,6 +4,7 @@ defmodule HealthguardApi.Users do
   """
 
   import Ecto.Query, warn: false
+  alias HealthguardApi.Users.Recommandation
   alias HealthguardApi.Sensors.SensorData
   alias HealthguardApi.Users.PacientProfile
   alias HealthguardApi.Repo
@@ -140,6 +141,32 @@ defmodule HealthguardApi.Users do
            pacient_profile
            |> PacientProfile.changeset()
            |> Ecto.Changeset.put_assoc(:medic_profile, medic_profile)
+           |> Repo.update() do
+      {:ok, updated_pacient_profile}
+    end
+  end
+
+  def add_recommandation_to_pacient(pacient_profile_id, attrs) do
+    add_recommandation = fn pacient_profile, recommandations ->
+      new_recommandation =
+        recommandations
+        |> Enum.map(fn recommandation ->
+          Recommandation.changeset(%Recommandation{}, recommandation)
+        end)
+
+      new_recommandation ++ pacient_profile.recommandations
+    end
+
+    recommandation_to_be_added = [
+      attrs
+    ]
+
+    with {:ok, pacient_profile} <- get_pacient_profile(pacient_profile_id),
+         recommandations <- add_recommandation.(pacient_profile, recommandation_to_be_added),
+         {:ok, updated_pacient_profile} <-
+           pacient_profile
+           |> PacientProfile.changeset()
+           |> Ecto.Changeset.put_embed(:recommandations, recommandations)
            |> Repo.update() do
       {:ok, updated_pacient_profile}
     end

@@ -5,6 +5,7 @@ defmodule HealthguardApi.Users.Recommandation do
   alias HealthguardApi.Users.Recommandation
 
   embedded_schema do
+    field :recommandation, :string
     field :days_duration, :integer
     field :note, :string
     field :start_date, :date
@@ -15,7 +16,7 @@ defmodule HealthguardApi.Users.Recommandation do
   @doc false
   def changeset(%Recommandation{} = recommandation, attrs) do
     recommandation
-    |> cast(attrs, [:days_duration, :note, :start_date])
+    |> cast(attrs, [:recommandation, :days_duration, :note, :start_date])
     |> validate_required([:days_duration, :note, :start_date])
   end
 end

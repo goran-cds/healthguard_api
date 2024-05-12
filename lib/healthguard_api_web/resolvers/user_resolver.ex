@@ -64,8 +64,6 @@ defmodule HealthguardApiWeb.Resolvers.UserResolver do
   end
 
   def register_pacient(_, %{input: attrs}, _) do
-    IO.inspect(attrs, label: "ATTRIBUTES")
-
     user_params = %{
       email: attrs.email,
       password: attrs.password,
@@ -84,21 +82,15 @@ defmodule HealthguardApiWeb.Resolvers.UserResolver do
 
     medic_email = attrs.medic_email
 
-    with {:ok, user} <- IO.inspect(Users.create_user(user_params), label: "Created user"),
+    with {:ok, user} <- Users.create_user(user_params),
          {:ok, pacient_profile} <-
-           IO.inspect(Users.create_pacient_profile(user, pacient_params),
-             label: "Created pacient profile"
-           ),
+           Users.create_pacient_profile(user, pacient_params),
          {:ok, medic_user} <-
-           IO.inspect(Users.get_user_by_email(medic_email), label: "Found medic"),
+           Users.get_user_by_email(medic_email),
          {:ok, medic_profile} <-
-           IO.inspect(Users.get_medic_profile(medic_user.medic_profile.id),
-             label: "Found medic profile"
-           ),
+           Users.get_medic_profile(medic_user.medic_profile.id),
          {:ok, _} <-
-           IO.inspect(Users.associate_pacient_with_medic(pacient_profile.id, medic_profile),
-             label: "Successfully associated"
-           ) do
+           Users.associate_pacient_with_medic(pacient_profile.id, medic_profile) do
       Users.get_user(user.id)
     end
   end
@@ -133,6 +125,22 @@ defmodule HealthguardApiWeb.Resolvers.UserResolver do
     }
 
     {:ok, pacient_profile} = Users.add_sensor_data_to_pacient(user_id, sensor_data)
+
+    Users.get_user(pacient_profile.user_id)
+  end
+
+  def add_recommandation_to_pacient(_, %{input: attrs}, _) do
+    pacient_profile_id = attrs.id
+
+    recommandation = %{
+      recommandation: attrs.recommandation,
+      start_date: attrs.start_date,
+      note: attrs.note,
+      days_duration: attrs.days_duration
+    }
+
+    {:ok, pacient_profile} =
+      Users.add_recommandation_to_pacient(pacient_profile_id, recommandation)
 
     Users.get_user(pacient_profile.user_id)
   end

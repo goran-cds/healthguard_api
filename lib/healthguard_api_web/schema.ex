@@ -94,5 +94,11 @@ defmodule HealthguardApiWeb.Schema do
       arg(:pacient_id, non_null(:id))
       resolve(&Resolvers.UserResolver.delete_pacient_user/3)
     end
+
+    @desc "Add a recommandation to a pacient user"
+    field :add_recommandation, type: :user_type do
+      arg(:input, non_null(:add_recommandation_input_type))
+      resolve(&Resolvers.UserResolver.add_recommandation_to_pacient/3)
+    end
   end
 end
