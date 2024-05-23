@@ -89,7 +89,7 @@ defmodule HealthguardApiWeb.Resolvers.UserResolver do
       Users.get_user(user.id)
     else
       {:error, msg} ->
-        {:error, msg}
+        {:error, "ERROR: #{msg}"}
     end
   end
 
