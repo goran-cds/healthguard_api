@@ -77,16 +77,19 @@ defmodule HealthguardApiWeb.Resolvers.UserResolver do
 
     medic_email = attrs.medic_email
 
-    with {:ok, user} <- Users.create_user(user_params),
+    with {:ok, medic_user} <-
+           Users.get_user_by_email(medic_email),
+         {:ok, user} <- Users.create_user(user_params),
          {:ok, pacient_profile} <-
            Users.create_pacient_profile(user, pacient_params),
-         {:ok, medic_user} <-
-           Users.get_user_by_email(medic_email),
          {:ok, medic_profile} <-
            Users.get_medic_profile(medic_user.medic_profile.id),
          {:ok, _} <-
            Users.associate_pacient_with_medic(pacient_profile.id, medic_profile) do
       Users.get_user(user.id)
+    else
+      {:error, msg} ->
+        {:error, msg}
     end
   end
 
