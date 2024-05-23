@@ -68,16 +68,11 @@ defmodule HealthguardApiWeb.Resolvers.UserResolver do
       email: attrs.email,
       password: attrs.password,
       first_name: attrs.first_name,
-      last_name: attrs.last_name,
-      phone_number: attrs.phone_number
+      last_name: attrs.last_name
     }
 
     pacient_params = %{
-      cnp: attrs.pacient_profile.cnp,
-      age: attrs.pacient_profile.age,
-      address: attrs.pacient_profile.address,
-      work_place: attrs.pacient_profile.work_place,
-      profession: attrs.pacient_profile.profession
+      cnp: attrs.pacient_profile.cnp
     }
 
     medic_email = attrs.medic_email

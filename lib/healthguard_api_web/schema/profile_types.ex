@@ -39,10 +39,6 @@ defmodule HealthguardApiWeb.Schema.ProfileTypes do
 
   input_object :pacient_profile_input_type do
     field :cnp, non_null(:string)
-    field :age, non_null(:integer)
-    field :work_place, :string
-    field :profession, :string
-    field :address, :address_input_type
   end
 
   input_object :medic_profile_input_type do
