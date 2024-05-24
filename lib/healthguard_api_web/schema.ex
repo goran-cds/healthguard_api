@@ -60,7 +60,7 @@ defmodule HealthguardApiWeb.Schema do
 
   mutation do
     @desc "Register a pacient user"
-    field :register_pacient, type: :user_type do
+    field :register_pacient, type: :session_type do
       arg(:input, non_null(:pacient_user_input_type))
       resolve(&Resolvers.UserResolver.register_pacient/3)
     end

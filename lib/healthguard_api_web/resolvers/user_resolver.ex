@@ -1,5 +1,6 @@
 defmodule HealthguardApiWeb.Resolvers.UserResolver do
   alias HealthguardApi.Users
+  alias HealthguardApi.Guardian
 
   def get_users(_, _, _) do
     {:ok, Users.get_users()}
@@ -71,8 +72,11 @@ defmodule HealthguardApiWeb.Resolvers.UserResolver do
       last_name: attrs.last_name
     }
 
+    age = Users.calculate_age(attrs.pacient_profile.cnp)
+
     pacient_params = %{
-      cnp: attrs.pacient_profile.cnp
+      cnp: attrs.pacient_profile.cnp,
+      age: age
     }
 
     medic_email = attrs.medic_email
@@ -85,11 +89,14 @@ defmodule HealthguardApiWeb.Resolvers.UserResolver do
          {:ok, medic_profile} <-
            Users.get_medic_profile(medic_user.medic_profile.id),
          {:ok, _} <-
-           Users.associate_pacient_with_medic(pacient_profile.id, medic_profile) do
-      Users.get_user(user.id)
+           Users.associate_pacient_with_medic(pacient_profile.id, medic_profile),
+         {:ok, user} <- Users.authenticate_user(attrs),
+         {:ok, jwt_token, _} <- Guardian.encode_and_sign(user) do
+      {:ok, user} = Users.get_user(user.id)
+      {:ok, %{token: jwt_token, user: user}}
     else
       {:error, msg} ->
-        {:error, "ERROR: #{msg}"}
+        {:error, msg}
     end
   end
 

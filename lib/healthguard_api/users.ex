@@ -460,4 +460,48 @@ defmodule HealthguardApi.Users do
       {:error, :user, changeset, _} -> {:error, changeset}
     end
   end
+
+  # Helper functions
+
+  def calculate_age(cnp) when is_binary(cnp) and byte_size(cnp) == 13 do
+    {birth_date, century} = extract_birth_date_and_century(cnp)
+    calculate_age_from_birth_date(birth_date, century)
+  end
+
+  defp extract_birth_date_and_century(
+         <<first_digit::binary-size(1), year::binary-size(2), month::binary-size(2),
+           day::binary-size(2), _rest::binary>>
+       ) do
+    year = String.to_integer(year)
+    month = String.to_integer(month)
+    day = String.to_integer(day)
+
+    century =
+      case first_digit do
+        "1" -> 1900
+        "2" -> 1900
+        "3" -> 1800
+        "4" -> 1800
+        "5" -> 2000
+        "6" -> 2000
+        _ -> raise ArgumentError, "Invalid CNP first digit"
+      end
+
+    {{year, month, day}, century}
+  end
+
+  defp calculate_age_from_birth_date({year, month, day}, century) do
+    birth_date = Date.new!(century + year, month, day)
+    current_date = Date.utc_today()
+
+    years_diff = current_date.year - birth_date.year
+
+    if Date.compare(Date.new!(current_date.year, birth_date.month, birth_date.day), current_date) in [
+         :gt
+       ] do
+      years_diff - 1
+    else
+      years_diff
+    end
+  end
 end
