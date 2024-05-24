@@ -92,6 +92,7 @@ defmodule HealthguardApiWeb.Resolvers.UserResolver do
            Users.associate_pacient_with_medic(pacient_profile.id, medic_profile),
          {:ok, user} <- Users.authenticate_user(attrs),
          {:ok, jwt_token, _} <- Guardian.encode_and_sign(user) do
+      Users.create_user_token(user.id, jwt_token)
       {:ok, user} = Users.get_user(user.id)
       {:ok, %{token: jwt_token, user: user}}
     else
