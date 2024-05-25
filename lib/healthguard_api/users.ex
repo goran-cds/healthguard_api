@@ -153,7 +153,7 @@ defmodule HealthguardApi.Users do
     with {:ok, pacient_profile} <- get_pacient_profile(pacient_profile_id),
          {:ok, updated_pacient_profile} <-
            pacient_profile
-           |> PacientProfile.changeset()
+           |> PacientProfile.changeset(%{state: :confirmed})
            |> Ecto.Changeset.put_assoc(:medic_profile, medic_profile)
            |> Repo.update() do
       {:ok, updated_pacient_profile}
