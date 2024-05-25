@@ -146,9 +146,13 @@ defmodule HealthguardApiWeb.Resolvers.UserResolver do
       humidity: attrs.humidity
     }
 
-    {:ok, pacient_profile} = Users.add_sensor_data_to_pacient(user_id, sensor_data)
-
-    Users.get_user(pacient_profile.user_id)
+    with {:ok, pacient_profile} <- Users.add_sensor_data_to_pacient(user_id, sensor_data),
+         {:ok, _message} <-
+           IO.inspect(Users.maybe_trigger_alert(pacient_profile, sensor_data),
+             label: "Triggered?"
+           ) do
+      Users.get_user(pacient_profile.user_id)
+    end
   end
 
   def add_recommandation_to_pacient(_, %{input: attrs}, _) do
@@ -225,6 +229,20 @@ defmodule HealthguardApiWeb.Resolvers.UserResolver do
          {:ok, _updated_user} <- Users.update_user(user, user_attrs),
          {:ok, updated_pacient_profile} <-
            Users.update_pacient_profile(pacient_profile, pacient_profile_attrs) do
+      Users.get_user(updated_pacient_profile.user_id)
+    end
+  end
+
+  def update_pacient_activity_type(
+        _,
+        %{pacient_id: pacient_profile_id, activity_type: activity_type},
+        _
+      ) do
+    with {:ok, pacient_profile} <- Users.get_pacient_profile(pacient_profile_id),
+         {:ok, updated_pacient_profile} <-
+           Users.update_pacient_profile(pacient_profile, %{
+             activity_type: %{type: activity_type.type}
+           }) do
       Users.get_user(updated_pacient_profile.user_id)
     end
   end

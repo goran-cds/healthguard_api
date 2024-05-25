@@ -284,6 +284,64 @@ defmodule HealthguardApi.Users do
     |> hd
   end
 
+  def update_health_warning(pacient_profile, alert) do
+    updated_health_warnings =
+      pacient_profile.health_warnings
+      |> Enum.map(fn health_warning ->
+        if health_warning.id == alert.id do
+          {:ok, updated_health_warning} =
+            health_warning
+            |> HealthWarnings.changeset(%{
+              triggered: true,
+              triggered_date: Date.utc_today()
+            })
+            |> Ecto.Changeset.apply_action(:create)
+
+          updated_health_warning
+          |> Map.from_struct()
+          |> Map.put(:activity_type, %{type: updated_health_warning.activity_type.type})
+        else
+          health_warning
+          |> Map.from_struct()
+          |> Map.put(:activity_type, %{type: health_warning.activity_type.type})
+        end
+      end)
+
+    update_pacient_profile(pacient_profile, %{health_warnings: updated_health_warnings})
+  end
+
+  def maybe_trigger_alert(pacient_profile, sensor_data) do
+    processed_data = %{
+      bpm: sensor_data[:bpm],
+      temperature: sensor_data[:temperature],
+      humidity: sensor_data[:humidity],
+      ecg: Enum.sum(sensor_data[:ecg]) / length(sensor_data[:ecg])
+    }
+
+    triggered_alerts =
+      pacient_profile.health_warnings
+      |> Enum.filter(fn warning ->
+        value = processed_data[warning.type]
+
+        warning.triggered == false and
+          pacient_profile.activity_type.type == warning.activity_type.type and
+          (value < warning.min_value or value > warning.max_value)
+      end)
+
+    case triggered_alerts do
+      [] ->
+        {:ok, :normal}
+
+      alerts ->
+        alerts
+        |> Enum.map(fn alert ->
+          {:ok, _updated_pacient_profile} = update_health_warning(pacient_profile, alert)
+        end)
+
+        {:ok, :triggered}
+    end
+  end
+
   # -------------------------------------------------------------------------------------------------------------------------------------------------
 
   def authenticate_user(attrs) do

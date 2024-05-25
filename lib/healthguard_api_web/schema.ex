@@ -5,8 +5,6 @@ defmodule HealthguardApiWeb.Schema do
 
   import_types(HealthguardApiWeb.Schema.Types)
 
-  # create query to get last / ongoing activity
-
   query do
     @desc "Get a list of all users"
     field :users, list_of(:user_type) do
@@ -117,6 +115,13 @@ defmodule HealthguardApiWeb.Schema do
     field :add_alert, type: :user_type do
       arg(:input, non_null(:add_alert_input_type))
       resolve(&Resolvers.UserResolver.add_alert_to_pacient/3)
+    end
+
+    @desc "Update a pacient's current activity"
+    field :update_pacient_activity_type, :user_type do
+      arg(:pacient_id, non_null(:id))
+      arg(:activity_type, non_null(:activity_type_input))
+      resolve(&Resolvers.UserResolver.update_pacient_activity_type/3)
     end
   end
 end
