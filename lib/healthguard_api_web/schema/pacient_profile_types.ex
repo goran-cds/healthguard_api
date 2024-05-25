@@ -27,7 +27,22 @@ defmodule HealthguardApiWeb.Schema.PacientProfileTypes do
     field :activity_type, :activity_type
   end
 
+  object :health_warning_type do
+    field :message, :string
+    field :min_value, :float
+    field :max_value, :float
+    field :type, :sensor_type_enum
+    field :activity_type, :activity_type
+    field :defined_date, :date
+    field :triggered_date, :date
+    field :triggered, :boolean
+  end
+
   object :activity_type do
+    field :type, :activity_type_enum
+  end
+
+  input_object :activity_type_input do
     field :type, :activity_type_enum
   end
 
@@ -50,6 +65,15 @@ defmodule HealthguardApiWeb.Schema.PacientProfileTypes do
     field :start_date, non_null(:datetime)
     field :note, non_null(:string)
     field :days_duration, non_null(:integer)
+  end
+
+  input_object :add_alert_input_type do
+    field :id, non_null(:id)
+    field :message, :string
+    field :min_value, non_null(:float)
+    field :max_value, non_null(:float)
+    field :type, non_null(:sensor_type_enum)
+    field :activity_type, non_null(:activity_type_input)
   end
 
   enum(:activity_type_enum, values: ActivityType.activity_types())

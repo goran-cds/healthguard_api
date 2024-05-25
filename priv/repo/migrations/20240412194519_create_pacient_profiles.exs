@@ -14,6 +14,7 @@ defmodule HealthguardApi.Repo.Migrations.CreatePacientProfiles do
       add :address, :jsonb
       add :sensor_data, :jsonb, default: "[]"
       add :recommandations, :jsonb, default: "[]"
+      add :health_warnings, :jsonb, default: "[]"
       add :activity_type, :jsonb
 
       add :user_id, references(:users), null: false

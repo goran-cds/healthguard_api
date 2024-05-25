@@ -44,10 +44,16 @@ defmodule HealthguardApiWeb.Schema do
     end
 
     @desc "Get a pacient's last read sensor data for a type"
-    field :get_pacient_last_sensor_data, :sensor_data_type do
-      arg(:user_id, non_null(:id))
+    field :get_pacient_last_sensor_data_by_type, :sensor_data_type do
+      arg(:pacient_id, non_null(:id))
       arg(:sensor_type, non_null(:sensor_type_enum))
       resolve(&Resolvers.UserResolver.get_pacient_last_sensor_data/3)
+    end
+
+    @desc "Get a pacient's last read sensor data (all sensors)"
+    field :get_pacient_last_read_sensor_data, list_of(:sensor_data_type) do
+      arg(:pacient_id, non_null(:id))
+      resolve(&Resolvers.UserResolver.get_pacient_last_read_sensor_data/3)
     end
 
     @desc "Get a pacient's sensor data by type"
@@ -105,6 +111,12 @@ defmodule HealthguardApiWeb.Schema do
     field :update_pacient_user, type: :user_type do
       arg(:input, non_null(:update_pacient_user_input_type))
       resolve(&Resolvers.UserResolver.update_pacient_user/3)
+    end
+
+    @desc "Add a new alert for a pacient user"
+    field :add_alert, type: :user_type do
+      arg(:input, non_null(:add_alert_input_type))
+      resolve(&Resolvers.UserResolver.add_alert_to_pacient/3)
     end
   end
 end

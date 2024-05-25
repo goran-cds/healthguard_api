@@ -36,8 +36,8 @@ defmodule HealthguardApiWeb.Resolvers.UserResolver do
     end
   end
 
-  def get_pacient_last_sensor_data(_, %{user_id: user_id, sensor_type: sensor_type}, _) do
-    {:ok, user} = Users.get_user(user_id)
+  def get_pacient_last_sensor_data(_, %{pacient_id: pacient_id, sensor_type: sensor_type}, _) do
+    {:ok, user} = Users.get_user_by_pacient_id(pacient_id)
 
     case user.pacient_profile do
       nil ->
@@ -49,6 +49,22 @@ defmodule HealthguardApiWeb.Resolvers.UserResolver do
           else:
             {:ok,
              Users.get_pacient_sensor_data_by_type(user.pacient_profile.id, sensor_type) |> hd}
+    end
+  end
+
+  def get_pacient_last_read_sensor_data(_, %{pacient_id: pacient_id}, _) do
+    {:ok, user} = Users.get_user_by_pacient_id(pacient_id)
+
+    case user.pacient_profile do
+      nil ->
+        {:ok, nil}
+
+      _ ->
+        if user.pacient_profile.sensor_data == [],
+          do: {:ok, nil},
+          else:
+            {:ok,
+             Users.get_pacient_last_read_sensor_data(user.pacient_profile.id) |> Enum.take(4)}
     end
   end
 
@@ -147,6 +163,32 @@ defmodule HealthguardApiWeb.Resolvers.UserResolver do
 
     {:ok, pacient_profile} =
       Users.add_recommandation_to_pacient(pacient_profile_id, recommandation)
+
+    Users.get_user(pacient_profile.user_id)
+  end
+
+  def add_alert_to_pacient(_, %{input: attrs}, _) do
+    pacient_profile_id = attrs.id
+
+    message =
+      case Map.has_key?(attrs, :message) do
+        false -> nil
+        true -> attrs.message
+      end
+
+    health_warning = %{
+      type: attrs.type,
+      message: message,
+      min_value: attrs.min_value,
+      max_value: attrs.max_value,
+      activity_type: %{
+        type: attrs.activity_type.type
+      },
+      defined_date: Date.utc_today()
+    }
+
+    {:ok, pacient_profile} =
+      Users.add_health_warning_to_pacient(pacient_profile_id, health_warning)
 
     Users.get_user(pacient_profile.user_id)
   end

@@ -15,6 +15,7 @@ defmodule HealthguardApiWeb.Schema.ProfileTypes do
     field :state, :state_type_enum
     field :sensor_data, list_of(:sensor_data_type)
     field :recommandations, list_of(:recommandation_type)
+    field :health_warnings, list_of(:health_warning_type)
     field :activity_type, :activity_type
     field :medic_profile, :medic_profile_type
     field :inserted_at, :date

@@ -2,6 +2,7 @@ defmodule HealthguardApi.Users.PacientProfile do
   use Ecto.Schema
   import Ecto.Changeset
 
+  alias HealthguardApi.Alerts.HealthWarnings
   alias HealthguardApi.Users.MedicProfile
   alias HealthguardApi.Sensors.SensorData
   alias HealthguardApi.Users.{User, Address, Recommandation, ActivityType}
@@ -25,6 +26,7 @@ defmodule HealthguardApi.Users.PacientProfile do
     embeds_one :address, Address, on_replace: :delete
     embeds_many :sensor_data, SensorData, on_replace: :delete
     embeds_many :recommandations, Recommandation, on_replace: :delete
+    embeds_many :health_warnings, HealthWarnings, on_replace: :delete
     embeds_one :activity_type, ActivityType, on_replace: :delete
 
     belongs_to :user, User
@@ -42,6 +44,7 @@ defmodule HealthguardApi.Users.PacientProfile do
     |> cast_embed(:address, with: &Address.changeset/2)
     |> cast_embed(:sensor_data, with: &SensorData.changeset/2)
     |> cast_embed(:recommandations, with: &Recommandation.changeset/2)
+    |> cast_embed(:health_warnings, with: &HealthWarnings.changeset/2)
     |> cast_embed(:activity_type, with: &ActivityType.changeset/2)
     |> validate_required([
       :cnp,

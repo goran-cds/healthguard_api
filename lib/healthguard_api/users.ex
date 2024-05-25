@@ -4,6 +4,7 @@ defmodule HealthguardApi.Users do
   """
 
   import Ecto.Query, warn: false
+  alias HealthguardApi.Alerts.HealthWarnings
   alias HealthguardApi.Users.Recommandation
   alias HealthguardApi.Sensors.SensorData
   alias HealthguardApi.Users.PacientProfile
@@ -184,6 +185,32 @@ defmodule HealthguardApi.Users do
     end
   end
 
+  def add_health_warning_to_pacient(pacient_profile_id, attrs) do
+    add_health_warning = fn pacient_profile, health_warnings ->
+      new_health_warning =
+        health_warnings
+        |> Enum.map(fn health_warning ->
+          HealthWarnings.changeset(%HealthWarnings{}, health_warning)
+        end)
+
+      new_health_warning ++ pacient_profile.health_warnings
+    end
+
+    health_warning_to_be_added = [
+      attrs
+    ]
+
+    with {:ok, pacient_profile} <- get_pacient_profile(pacient_profile_id),
+         health_warnings <- add_health_warning.(pacient_profile, health_warning_to_be_added),
+         {:ok, updated_pacient_profile} <-
+           pacient_profile
+           |> PacientProfile.changeset()
+           |> Ecto.Changeset.put_embed(:health_warnings, health_warnings)
+           |> Repo.update() do
+      {:ok, updated_pacient_profile}
+    end
+  end
+
   def add_sensor_data_to_pacient(user_id, sensor_data_attrs) do
     temperature = %{
       type: :temperature,
@@ -249,6 +276,12 @@ defmodule HealthguardApi.Users do
       from(u in User, where: u.id == ^deleted_pacient_profile.user_id)
       |> Repo.one()
       |> Repo.delete()
+  end
+
+  def get_pacient_last_read_sensor_data(pacient_profile_id) do
+    from(pp in PacientProfile, where: pp.id == ^pacient_profile_id, select: pp.sensor_data)
+    |> Repo.all()
+    |> hd
   end
 
   # -------------------------------------------------------------------------------------------------------------------------------------------------
