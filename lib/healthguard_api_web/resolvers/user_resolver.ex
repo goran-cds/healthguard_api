@@ -105,6 +105,46 @@ defmodule HealthguardApiWeb.Resolvers.UserResolver do
          {:ok, medic_profile} <-
            Users.get_medic_profile(medic_user.medic_profile.id),
          {:ok, _} <-
+           Users.associate_pacient_with_medic(pacient_profile.id, medic_profile) do
+      Users.get_user(user.id)
+    else
+      {:error, msg} ->
+        {:error, msg}
+    end
+  end
+
+  def register_pacient_by_medic(_, %{input: attrs}, _) do
+    user_params = %{
+      email: attrs.email,
+      password: attrs.password,
+      first_name: attrs.first_name,
+      last_name: attrs.last_name,
+      phone_number: attrs.phone_number
+    }
+
+    pacient_params = %{
+      cnp: attrs.pacient_profile.cnp,
+      age: attrs.pacient_profile.age,
+      profession: attrs.pacient_profile.profession,
+      work_place: attrs.pacient_profile.work_place,
+      address: %{
+        country: attrs.pacient_profile.address.country,
+        city: attrs.pacient_profile.address.city,
+        street: attrs.pacient_profile.address.street,
+        street_number: attrs.pacient_profile.address.street_number
+      }
+    }
+
+    medic_email = attrs.medic_email
+
+    with {:ok, medic_user} <-
+           Users.get_user_by_email(medic_email),
+         {:ok, user} <- Users.create_user(user_params),
+         {:ok, pacient_profile} <-
+           Users.create_pacient_profile(user, pacient_params),
+         {:ok, medic_profile} <-
+           Users.get_medic_profile(medic_user.medic_profile.id),
+         {:ok, _} <-
            Users.associate_pacient_with_medic(pacient_profile.id, medic_profile),
          {:ok, user} <- Users.authenticate_user(attrs),
          {:ok, jwt_token, _} <- Guardian.encode_and_sign(user) do

@@ -30,6 +30,7 @@ defmodule HealthguardApiWeb.Schema.ProfileTypes do
     field :cnp, :string
     field :inserted_at, :string
     field :phone_number, :string
+    field :pacient_profile, :pacient_profile_type
   end
 
   object :medic_profile_type do
@@ -40,6 +41,14 @@ defmodule HealthguardApiWeb.Schema.ProfileTypes do
 
   input_object :pacient_profile_input_type do
     field :cnp, non_null(:string)
+  end
+
+  input_object :pacient_profile_input_type_extended do
+    field :age, non_null(:integer)
+    field :cnp, non_null(:string)
+    field :work_place, non_null(:string)
+    field :profession, non_null(:string)
+    field :address, non_null(:address_input_type)
   end
 
   input_object :medic_profile_input_type do

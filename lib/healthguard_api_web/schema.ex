@@ -69,6 +69,12 @@ defmodule HealthguardApiWeb.Schema do
       resolve(&Resolvers.UserResolver.register_pacient/3)
     end
 
+    @desc "Register a pacient user with all parameters (by doctor)"
+    field :register_pacient_by_medic, type: :user_type do
+      arg(:input, non_null(:pacient_user_input_type_extended))
+      resolve(&Resolvers.UserResolver.register_pacient_by_medic/3)
+    end
+
     @desc "Register a medic user"
     field :register_medic, type: :user_type do
       arg(:input, non_null(:medic_user_input_type))

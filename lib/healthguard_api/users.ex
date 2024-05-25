@@ -143,6 +143,7 @@ defmodule HealthguardApi.Users do
         cnp: pacient.cnp,
         email: pacient.user.email,
         phone_number: pacient.user.phone_number,
+        pacient_profile: pacient,
         inserted_at: pacient.inserted_at
       }
     end)
