@@ -188,9 +188,7 @@ defmodule HealthguardApiWeb.Resolvers.UserResolver do
 
     with {:ok, pacient_profile} <- Users.add_sensor_data_to_pacient(user_id, sensor_data),
          {:ok, _message} <-
-           IO.inspect(Users.maybe_trigger_alert(pacient_profile, sensor_data),
-             label: "Triggered?"
-           ) do
+           Users.maybe_trigger_alert(pacient_profile, sensor_data) do
       Users.get_user(pacient_profile.user_id)
     end
   end
