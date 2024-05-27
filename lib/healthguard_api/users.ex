@@ -306,6 +306,57 @@ defmodule HealthguardApi.Users do
     |> Enum.filter(fn sensor_data -> sensor_data.type == sensor_type end)
   end
 
+  def get_pacient_sensor_data_by_datetime(pacient_profile_id, date) do
+    check_if_date_matches = fn d ->
+      d.year == date.year and
+        d.month == date.month and
+        d.day == date.day and
+        d.hour == date.hour
+    end
+
+    sensor_data =
+      from(pp in PacientProfile, where: pp.id == ^pacient_profile_id, select: pp.sensor_data)
+      |> Repo.one()
+      |> Enum.filter(fn sensor_data -> check_if_date_matches.(sensor_data.date) end)
+      |> Enum.map(fn sensor_data ->
+        %{
+          type: sensor_data.type,
+          value: sensor_data.value
+        }
+      end)
+
+    bpm_data =
+      sensor_data
+      |> Enum.filter(fn data -> data.type == :bpm end)
+      |> Enum.map(fn data -> data.value |> hd end)
+      |> Enum.reverse()
+
+    temperature_data =
+      sensor_data
+      |> Enum.filter(fn data -> data.type == :temperature end)
+      |> Enum.map(fn data -> data.value |> hd end)
+      |> Enum.reverse()
+
+    humidity_data =
+      sensor_data
+      |> Enum.filter(fn data -> data.type == :humidity end)
+      |> Enum.map(fn data -> data.value |> hd end)
+      |> Enum.reverse()
+
+    ecg_data =
+      sensor_data
+      |> Enum.filter(fn data -> data.type == :ecg end)
+      |> Enum.map(fn data -> Enum.sum(data.value) / length(data.value) end)
+      |> Enum.reverse()
+
+    %{
+      bpm: bpm_data,
+      ecg: ecg_data,
+      temperature: temperature_data,
+      humidity: humidity_data
+    }
+  end
+
   def get_pacient_sensor_data_by_date(pacient_profile_id, date) do
     check_if_date_matches = fn d ->
       d.year == date.year and

@@ -73,6 +73,13 @@ defmodule HealthguardApiWeb.Schema do
       resolve(&Resolvers.UserResolver.get_pacient_sensor_data_by_type/3)
     end
 
+    @desc "Get pacient's sensor data by date and time"
+    field :get_pacient_sensor_data_by_datetime, :sensor_data_type_for_day do
+      arg(:token, non_null(:string))
+      arg(:date, non_null(:datetime))
+      resolve(&Resolvers.UserResolver.get_pacient_sensor_data_by_datetime/3)
+    end
+
     @desc "Get pacient's sensor data by date"
     field :get_pacient_sensor_data_by_date, :sensor_data_type_for_day do
       arg(:token, non_null(:string))
