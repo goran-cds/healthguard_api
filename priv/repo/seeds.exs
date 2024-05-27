@@ -93,7 +93,7 @@ alias HealthguardApi.Users
 {:ok, _pacient_profile} =
   Users.add_recommandation_to_pacient(user3.pacient_profile.id, %{
     recommandation: "drink at least 3L a day",
-    start_date: Date.utc_today(),
+    start_date: DateTime.utc_now() |> DateTime.shift_zone!("Europe/Bucharest"),
     note: "of water, nothing else",
     days_duration: 30,
     activity_type: %{
@@ -104,7 +104,7 @@ alias HealthguardApi.Users
 {:ok, _pacient_profile} =
   Users.add_recommandation_to_pacient(user3.pacient_profile.id, %{
     recommandation: "jog each morning",
-    start_date: Date.utc_today(),
+    start_date: DateTime.utc_now() |> DateTime.shift_zone!("Europe/Bucharest"),
     note: "from 30 to 60 minutes",
     days_duration: 7,
     activity_type: %{
@@ -115,7 +115,7 @@ alias HealthguardApi.Users
 {:ok, _pacient_profile} =
   Users.add_recommandation_to_pacient(user3.pacient_profile.id, %{
     recommandation: "3 sessions per day",
-    start_date: Date.utc_today(),
+    start_date: DateTime.utc_now() |> DateTime.shift_zone!("Europe/Bucharest"),
     note: "do 15 minutes of running in each session",
     days_duration: 14,
     activity_type: %{
@@ -134,7 +134,7 @@ alias HealthguardApi.Users
     activity_type: %{
       type: :sedentary
     },
-    defined_date: Date.utc_today()
+    defined_date: DateTime.utc_now() |> DateTime.shift_zone!("Europe/Bucharest")
   })
 
 {:ok, _pacient_profile} =
@@ -146,7 +146,7 @@ alias HealthguardApi.Users
     activity_type: %{
       type: :sedentary
     },
-    defined_date: Date.utc_today()
+    defined_date: DateTime.utc_now() |> DateTime.shift_zone!("Europe/Bucharest")
   })
 
 {:ok, _pacient_profile} =
@@ -158,7 +158,7 @@ alias HealthguardApi.Users
     activity_type: %{
       type: :running
     },
-    defined_date: Date.utc_today()
+    defined_date: DateTime.utc_now() |> DateTime.shift_zone!("Europe/Bucharest")
   })
 
 {:ok, _pacient_profile} =
@@ -170,7 +170,7 @@ alias HealthguardApi.Users
     activity_type: %{
       type: :running
     },
-    defined_date: Date.utc_today()
+    defined_date: DateTime.utc_now() |> DateTime.shift_zone!("Europe/Bucharest")
   })
 
 # Pacient Mario Rossi - device measures sensor data and checks if it will trigger an alarm (he is SEDENTARY)

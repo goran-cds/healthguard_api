@@ -255,25 +255,25 @@ defmodule HealthguardApi.Users do
     temperature = %{
       type: :temperature,
       value: [sensor_data_attrs.temperature],
-      date: DateTime.utc_now()
+      date: DateTime.utc_now() |> DateTime.shift_zone!("Europe/Bucharest")
     }
 
     bpm = %{
       type: :bpm,
       value: [sensor_data_attrs.bpm],
-      date: DateTime.utc_now()
+      date: DateTime.utc_now() |> DateTime.shift_zone!("Europe/Bucharest")
     }
 
     humidity = %{
       type: :humidity,
       value: [sensor_data_attrs.humidity],
-      date: DateTime.utc_now()
+      date: DateTime.utc_now() |> DateTime.shift_zone!("Europe/Bucharest")
     }
 
     ecg = %{
       type: :ecg,
       value: sensor_data_attrs.ecg,
-      date: DateTime.utc_now()
+      date: DateTime.utc_now() |> DateTime.shift_zone!("Europe/Bucharest")
     }
 
     sensor_data = [bpm, ecg, temperature, humidity]

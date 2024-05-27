@@ -63,7 +63,8 @@ defmodule HealthguardApi.MixProject do
       {:absinthe_plug, "~> 1.5"},
       {:cors_plug, "~> 3.0"},
       {:argon2_elixir, "~> 4.0"},
-      {:guardian, "~> 2.0"}
+      {:guardian, "~> 2.0"},
+      {:tz, "~> 0.26.5"}
     ]
   end
 
