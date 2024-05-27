@@ -68,9 +68,16 @@ defmodule HealthguardApiWeb.Schema do
 
     @desc "Get a pacient's sensor data by type"
     field :get_pacient_sensor_data_by_type, list_of(:sensor_data_type) do
-      arg(:user_id, non_null(:id))
+      arg(:pacient_id, non_null(:id))
       arg(:sensor_type, non_null(:sensor_type_enum))
       resolve(&Resolvers.UserResolver.get_pacient_sensor_data_by_type/3)
+    end
+
+    @desc "Get pacient's sensor data by date"
+    field :get_pacient_sensor_data_by_date, :sensor_data_type_for_day do
+      arg(:token, non_null(:string))
+      arg(:date, non_null(:datetime))
+      resolve(&Resolvers.UserResolver.get_pacient_sensor_data_by_date/3)
     end
   end
 

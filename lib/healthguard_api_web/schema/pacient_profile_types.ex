@@ -19,6 +19,13 @@ defmodule HealthguardApiWeb.Schema.PacientProfileTypes do
     field :date, :datetime
   end
 
+  object :sensor_data_type_for_day do
+    field :bpm, list_of(:float)
+    field :ecg, list_of(:float)
+    field :temperature, list_of(:float)
+    field :humidity, list_of(:float)
+  end
+
   object :recommandation_type do
     field :days_duration, :integer
     field :recommandation, :string
