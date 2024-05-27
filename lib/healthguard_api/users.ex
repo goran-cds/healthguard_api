@@ -310,8 +310,7 @@ defmodule HealthguardApi.Users do
     check_if_date_matches = fn d ->
       d.year == date.year and
         d.month == date.month and
-        d.day == date.day and
-        d.hour == date.hour
+        d.day == date.day
     end
 
     sensor_data =
