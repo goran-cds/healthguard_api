@@ -403,6 +403,49 @@ defmodule HealthguardApi.Users do
     }
   end
 
+  def get_pacient_activities_by_date(pacient_profile_id, date) do
+    compute_end_date = fn start_date, days_duration ->
+      Date.add(start_date, days_duration)
+    end
+
+    compute_completed_percentage = fn start_date, days_duration ->
+      end_date = compute_end_date.(start_date, days_duration)
+      current_date = Date.utc_today()
+
+      total_days = Date.diff(end_date, start_date)
+      passed_days = Date.diff(current_date, start_date)
+
+      if total_days == 0 do
+        100
+      else
+        trunc(passed_days / total_days * 100)
+      end
+    end
+
+    check_if_in_date_interval = fn r_start_date, r_days_duration, date ->
+      r_end_date = compute_end_date.(r_start_date, r_days_duration)
+      date <= r_end_date and date >= r_start_date
+      Date.compare(date, r_end_date) != :gt and Date.compare(date, r_start_date) != :lt
+    end
+
+    from(pp in PacientProfile,
+      where: pp.id == ^pacient_profile_id,
+      select: pp.recommandations
+    )
+    |> Repo.one()
+    |> Enum.filter(fn recommandation ->
+      check_if_in_date_interval.(recommandation.start_date, recommandation.days_duration, date)
+    end)
+    |> Enum.map(fn recommandation ->
+      %{
+        type: recommandation.activity_type.type,
+        end_date: compute_end_date.(recommandation.start_date, recommandation.days_duration),
+        completed_percentage:
+          compute_completed_percentage.(recommandation.start_date, recommandation.days_duration)
+      }
+    end)
+  end
+
   def delete_user_by_pacient_profile_id(pacient_profile_id) do
     {:ok, deleted_pacient_profile} =
       from(pp in PacientProfile, where: pp.id == ^pacient_profile_id)

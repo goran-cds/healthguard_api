@@ -85,6 +85,13 @@ defmodule HealthguardApiWeb.Schema do
       arg(:token, non_null(:string))
       resolve(&Resolvers.UserResolver.get_pacient_current_activity_stats/3)
     end
+
+    @desc "Get a pacient's activities for a date"
+    field :get_pacient_activities_by_date, list_of(:pacient_current_activity_stats_type) do
+      arg(:token, non_null(:string))
+      arg(:date, non_null(:datetime))
+      resolve(&Resolvers.UserResolver.get_pacient_activities_by_date/3)
+    end
   end
 
   mutation do
