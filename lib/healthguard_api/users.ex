@@ -160,12 +160,22 @@ defmodule HealthguardApi.Users do
     end
   end
 
-  def add_recommandation_to_pacient(pacient_profile_id, attrs) do
+  def add_recommandation_to_pacient(pacient_profile_id, params) do
+    attrs = %{
+      recommandation: params.recommandation,
+      days_duration: params.days_duration,
+      note: params.note,
+      start_date: params.start_date
+    }
+
     add_recommandation = fn pacient_profile, recommandations ->
       new_recommandation =
         recommandations
         |> Enum.map(fn recommandation ->
-          Recommandation.changeset(%Recommandation{}, recommandation)
+          Recommandation.changeset(
+            %Recommandation{activity_type: params.activity_type},
+            recommandation
+          )
         end)
 
       new_recommandation ++ pacient_profile.recommandations
