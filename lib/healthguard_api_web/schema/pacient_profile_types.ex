@@ -49,6 +49,12 @@ defmodule HealthguardApiWeb.Schema.PacientProfileTypes do
     field :type, :activity_type_enum
   end
 
+  object :pacient_current_activity_stats_type do
+    field :type, :activity_type_enum
+    field :end_date, :date
+    field :completed_percentage, :integer
+  end
+
   input_object :activity_type_input do
     field :type, :activity_type_enum
   end

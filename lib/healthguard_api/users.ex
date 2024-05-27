@@ -307,8 +307,6 @@ defmodule HealthguardApi.Users do
   end
 
   def get_pacient_sensor_data_by_date(pacient_profile_id, date) do
-    IO.inspect(date, label: "Date")
-
     check_if_date_matches = fn d ->
       d.year == date.year and
         d.month == date.month and
@@ -356,6 +354,52 @@ defmodule HealthguardApi.Users do
       ecg: ecg_data,
       temperature: temperature_data,
       humidity: humidity_data
+    }
+  end
+
+  def get_pacient_current_activity_stats(pacient_profile_id) do
+    compute_end_date = fn start_date, days_duration ->
+      Date.add(start_date, days_duration)
+    end
+
+    compute_completed_percentage = fn start_date, end_date ->
+      current_date = Date.utc_today()
+
+      total_days = Date.diff(end_date, start_date)
+      passed_days = Date.diff(current_date, start_date)
+
+      if total_days == 0 do
+        100
+      else
+        trunc(passed_days / total_days * 100)
+      end
+    end
+
+    pacient_data =
+      from(pp in PacientProfile,
+        where: pp.id == ^pacient_profile_id,
+        select: %{
+          recommandations: pp.recommandations,
+          activity_type: pp.activity_type
+        }
+      )
+      |> Repo.one()
+
+    matching_recommandation =
+      pacient_data.recommandations
+      |> Enum.filter(fn data ->
+        data.activity_type.type == pacient_data.activity_type.type
+      end)
+      |> hd
+
+    end_date =
+      compute_end_date.(matching_recommandation.start_date, matching_recommandation.days_duration)
+
+    %{
+      type: pacient_data.activity_type.type,
+      end_date: end_date,
+      completed_percentage:
+        compute_completed_percentage.(matching_recommandation.start_date, end_date)
     }
   end
 

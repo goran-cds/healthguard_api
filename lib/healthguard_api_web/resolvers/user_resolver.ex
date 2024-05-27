@@ -114,6 +114,20 @@ defmodule HealthguardApiWeb.Resolvers.UserResolver do
     end
   end
 
+  def get_pacient_current_activity_stats(_, %{token: token}, _) do
+    user = Users.get_user_by_token(token)
+
+    case user.pacient_profile do
+      nil ->
+        {:ok, nil}
+
+      _ ->
+        if user.pacient_profile.sensor_data == [],
+          do: {:ok, nil},
+          else: {:ok, Users.get_pacient_current_activity_stats(user.pacient_profile.id)}
+    end
+  end
+
   def register_pacient(_, %{input: attrs}, _) do
     user_params = %{
       email: attrs.email,
