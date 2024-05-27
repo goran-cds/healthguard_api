@@ -95,7 +95,10 @@ alias HealthguardApi.Users
     recommandation: "drink at least 3L a day",
     start_date: Date.utc_today(),
     note: "of water, nothing else",
-    days_duration: 30
+    days_duration: 30,
+    activity_type: %{
+      type: :sedentary
+    }
   })
 
 {:ok, _pacient_profile} =
@@ -103,7 +106,10 @@ alias HealthguardApi.Users
     recommandation: "jog each morning",
     start_date: Date.utc_today(),
     note: "from 30 to 60 minutes",
-    days_duration: 7
+    days_duration: 7,
+    activity_type: %{
+      type: :jogging
+    }
   })
 
 {:ok, _pacient_profile} =
@@ -111,7 +117,10 @@ alias HealthguardApi.Users
     recommandation: "eat at least 3 portions of fruits a day",
     start_date: Date.utc_today(),
     note: "best sources include kiwi, banana, avocados",
-    days_duration: 14
+    days_duration: 14,
+    activity_type: %{
+      type: :sedentary
+    }
   })
 
 # Pacient Mario Rossi - his doctor (John Doe) adds alerts to monitor his bpm and temperature when he is sedentary or running
