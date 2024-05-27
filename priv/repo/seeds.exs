@@ -114,12 +114,12 @@ alias HealthguardApi.Users
 
 {:ok, _pacient_profile} =
   Users.add_recommandation_to_pacient(user3.pacient_profile.id, %{
-    recommandation: "eat at least 3 portions of fruits a day",
+    recommandation: "3 sessions per day",
     start_date: Date.utc_today(),
-    note: "best sources include kiwi, banana, avocados",
+    note: "do 15 minutes of running in each session",
     days_duration: 14,
     activity_type: %{
-      type: :sedentary
+      type: :running
     }
   })
 
@@ -184,8 +184,10 @@ sensor_data_1 = %{
 {:ok, _updated_pacient_profile} =
   Users.add_sensor_data_to_pacient(user3.id, sensor_data_1)
 
+{:ok, mario_rossi} = Users.get_user(user3.id)
+
 {:ok, _message} =
-  Users.maybe_trigger_alert(user3.pacient_profile, sensor_data_1)
+  Users.maybe_trigger_alert(mario_rossi.pacient_profile, sensor_data_1)
 
 sensor_data_2 = %{
   bpm: 70,
@@ -197,8 +199,10 @@ sensor_data_2 = %{
 {:ok, _updated_pacient_profile} =
   Users.add_sensor_data_to_pacient(user3.id, sensor_data_2)
 
+{:ok, mario_rossi} = Users.get_user(user3.id)
+
 {:ok, _message} =
-  Users.maybe_trigger_alert(user3.pacient_profile, sensor_data_2)
+  Users.maybe_trigger_alert(mario_rossi.pacient_profile, sensor_data_2)
 
 sensor_data_3 = %{
   bpm: 75,
@@ -210,8 +214,10 @@ sensor_data_3 = %{
 {:ok, _updated_pacient_profile} =
   Users.add_sensor_data_to_pacient(user3.id, sensor_data_3)
 
+{:ok, mario_rossi} = Users.get_user(user3.id)
+
 {:ok, _message} =
-  Users.maybe_trigger_alert(user3.pacient_profile, sensor_data_3)
+  Users.maybe_trigger_alert(mario_rossi.pacient_profile, sensor_data_3)
 
 sensor_data_4 = %{
   bpm: 70,
@@ -223,15 +229,19 @@ sensor_data_4 = %{
 {:ok, _updated_pacient_profile} =
   Users.add_sensor_data_to_pacient(user3.id, sensor_data_4)
 
+{:ok, mario_rossi} = Users.get_user(user3.id)
+
 {:ok, _message} =
-  Users.maybe_trigger_alert(user3.pacient_profile, sensor_data_4)
+  Users.maybe_trigger_alert(mario_rossi.pacient_profile, sensor_data_4)
 
 # At this point he should have a triggered alert for :temperature while :sedentary
 
 # Pacient Mario Rossi - he starts a new activity and is now RUNNING
 
+{:ok, mario_rossi} = Users.get_user(user3.id)
+
 {:ok, _updated_pacient_profile} =
-  Users.update_pacient_profile(user3.pacient_profile, %{
+  Users.update_pacient_profile(mario_rossi.pacient_profile, %{
     activity_type: %{type: :running}
   })
 
@@ -247,8 +257,10 @@ sensor_data_5 = %{
 {:ok, _updated_pacient_profile} =
   Users.add_sensor_data_to_pacient(user3.id, sensor_data_5)
 
+{:ok, mario_rossi} = Users.get_user(user3.id)
+
 {:ok, _message} =
-  Users.maybe_trigger_alert(user3.pacient_profile, sensor_data_5)
+  Users.maybe_trigger_alert(mario_rossi.pacient_profile, sensor_data_5)
 
 sensor_data_6 = %{
   bpm: 100,
@@ -260,8 +272,10 @@ sensor_data_6 = %{
 {:ok, _updated_pacient_profile} =
   Users.add_sensor_data_to_pacient(user3.id, sensor_data_6)
 
+{:ok, mario_rossi} = Users.get_user(user3.id)
+
 {:ok, _message} =
-  Users.maybe_trigger_alert(user3.pacient_profile, sensor_data_6)
+  Users.maybe_trigger_alert(mario_rossi.pacient_profile, sensor_data_6)
 
 sensor_data_7 = %{
   bpm: 120,
@@ -273,8 +287,10 @@ sensor_data_7 = %{
 {:ok, _updated_pacient_profile} =
   Users.add_sensor_data_to_pacient(user3.id, sensor_data_7)
 
+{:ok, mario_rossi} = Users.get_user(user3.id)
+
 {:ok, _message} =
-  Users.maybe_trigger_alert(user3.pacient_profile, sensor_data_7)
+  Users.maybe_trigger_alert(mario_rossi.pacient_profile, sensor_data_7)
 
 sensor_data_8 = %{
   bpm: 160,
@@ -286,8 +302,10 @@ sensor_data_8 = %{
 {:ok, _updated_pacient_profile} =
   Users.add_sensor_data_to_pacient(user3.id, sensor_data_8)
 
+{:ok, mario_rossi} = Users.get_user(user3.id)
+
 {:ok, _message} =
-  Users.maybe_trigger_alert(user3.pacient_profile, sensor_data_8)
+  Users.maybe_trigger_alert(mario_rossi.pacient_profile, sensor_data_8)
 
 # At this point he should have a triggered alert for :bpm while :running
 
