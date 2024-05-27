@@ -43,6 +43,20 @@ defmodule HealthguardApi.Users do
     |> Repo.ok_error()
   end
 
+  def get_pacient(id) do
+    from(u in User, where: u.id == ^id)
+    |> join(:left, [u], pp in PacientProfile, on: pp.user_id == u.id)
+    |> join(:left, [u, pp], mp in MedicProfile, on: mp.id == pp.medic_profile_id)
+    |> join(:left, [u, pp, mp], mu in User, on: mu.id == mp.user_id)
+    |> select([u, pp, mp, mu], %{
+      user: u,
+      pacient_profile: pp,
+      medic: mu
+    })
+    |> Repo.one()
+    |> Repo.ok_error()
+  end
+
   def get_user_by_pacient_id(pacient_profile_id) do
     User
     |> from(as: :user)
@@ -64,6 +78,21 @@ defmodule HealthguardApi.Users do
 
       _ ->
         {:ok, user} = get_user(user_token.user_id)
+        user
+    end
+  end
+
+  def get_pacient_by_token(token) do
+    user_token =
+      from(ut in UserToken, where: ut.token == ^token)
+      |> Repo.one()
+
+    case user_token do
+      nil ->
+        {:error, :token_not_found}
+
+      _ ->
+        {:ok, user} = get_pacient(user_token.user_id)
         user
     end
   end

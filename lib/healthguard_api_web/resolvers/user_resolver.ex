@@ -20,6 +20,10 @@ defmodule HealthguardApiWeb.Resolvers.UserResolver do
     {:ok, Users.get_user_by_token(token)}
   end
 
+  def get_pacient_by_token(_, %{token: token}, _) do
+    {:ok, Users.get_pacient_by_token(token)}
+  end
+
   def get_medic_pacients(_, %{user_id: user_id}, _) do
     {:ok, Users.get_medic_pacients(user_id)}
   end
@@ -54,6 +58,22 @@ defmodule HealthguardApiWeb.Resolvers.UserResolver do
 
   def get_pacient_last_read_sensor_data(_, %{pacient_id: pacient_id}, _) do
     {:ok, user} = Users.get_user_by_pacient_id(pacient_id)
+
+    case user.pacient_profile do
+      nil ->
+        {:ok, nil}
+
+      _ ->
+        if user.pacient_profile.sensor_data == [],
+          do: {:ok, nil},
+          else:
+            {:ok,
+             Users.get_pacient_last_read_sensor_data(user.pacient_profile.id) |> Enum.take(4)}
+    end
+  end
+
+  def get_pacient_last_read_sensor_data_by_token(_, %{token: token}, _) do
+    user = Users.get_user_by_token(token)
 
     case user.pacient_profile do
       nil ->

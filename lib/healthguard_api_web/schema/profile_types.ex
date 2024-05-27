@@ -2,6 +2,7 @@ defmodule HealthguardApiWeb.Schema.ProfileTypes do
   use Absinthe.Schema.Notation
 
   import_types(HealthguardApiWeb.Schema.PacientProfileTypes)
+  # import_types(HealthguardApiWeb.Schema.UserType)
 
   alias HealthguardApi.Users.PacientProfile
 
@@ -20,6 +21,12 @@ defmodule HealthguardApiWeb.Schema.ProfileTypes do
     field :medic_profile, :medic_profile_type
     field :inserted_at, :date
     field :user_id, :id
+  end
+
+  object :pacient_user_type do
+    field :user, :user_type
+    field :pacient_profile, :pacient_profile_type
+    field :medic, :user_type
   end
 
   object :pacient_data_type do

@@ -29,6 +29,12 @@ defmodule HealthguardApiWeb.Schema do
       resolve(&Resolvers.UserResolver.get_user_by_token/3)
     end
 
+    @desc "Get a pacient by session token"
+    field :get_pacient_by_token, :pacient_user_type do
+      arg(:token, non_null(:string))
+      resolve(&Resolvers.UserResolver.get_pacient_by_token/3)
+    end
+
     @desc "Get a user's pacient id"
     field :get_pacient_id, :id do
       arg(:user_id, non_null(:id))
@@ -52,6 +58,12 @@ defmodule HealthguardApiWeb.Schema do
     field :get_pacient_last_read_sensor_data, list_of(:sensor_data_type) do
       arg(:pacient_id, non_null(:id))
       resolve(&Resolvers.UserResolver.get_pacient_last_read_sensor_data/3)
+    end
+
+    @desc "Get a pacient's last read sensor data (all sensors) by token"
+    field :get_pacient_last_read_sensor_data_by_token, list_of(:sensor_data_type) do
+      arg(:token, non_null(:string))
+      resolve(&Resolvers.UserResolver.get_pacient_last_read_sensor_data_by_token/3)
     end
 
     @desc "Get a pacient's sensor data by type"
