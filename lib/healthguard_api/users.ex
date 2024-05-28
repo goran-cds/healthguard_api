@@ -436,20 +436,34 @@ defmodule HealthguardApi.Users do
       |> Repo.one()
 
     matching_recommandation =
-      pacient_data.recommandations
-      |> Enum.filter(fn data ->
-        data.activity_type.type == pacient_data.activity_type.type
-      end)
-      |> hd
+      case pacient_data.recommandations
+           |> Enum.filter(fn data ->
+             data.activity_type.type == pacient_data.activity_type.type
+           end) do
+        [] -> nil
+        list -> hd(list)
+      end
 
     end_date =
-      compute_end_date.(matching_recommandation.start_date, matching_recommandation.days_duration)
+      case matching_recommandation do
+        nil ->
+          nil
+
+        _ ->
+          compute_end_date.(
+            matching_recommandation.start_date,
+            matching_recommandation.days_duration
+          )
+      end
 
     %{
       type: pacient_data.activity_type.type,
       end_date: end_date,
       completed_percentage:
-        compute_completed_percentage.(matching_recommandation.start_date, end_date)
+        case end_date do
+          nil -> 0
+          end_date -> compute_completed_percentage.(matching_recommandation.start_date, end_date)
+        end
     }
   end
 
