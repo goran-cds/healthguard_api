@@ -136,9 +136,7 @@ defmodule HealthguardApiWeb.Resolvers.UserResolver do
         {:ok, nil}
 
       _ ->
-        if user.pacient_profile.sensor_data == [],
-          do: {:ok, nil},
-          else: {:ok, Users.get_pacient_current_activity_stats(user.pacient_profile.id)}
+        {:ok, Users.get_pacient_current_activity_stats(user.pacient_profile.id)}
     end
   end
 
