@@ -67,6 +67,7 @@ defmodule HealthguardApiWeb.Router do
       live "/users/log_in", UserLoginLive, :new
       live "/users/reset_password", UserForgotPasswordLive, :new
       live "/users/reset_password/:token", UserResetPasswordLive, :edit
+      live "/test/users", TestUsers
     end
 
     post "/users/log_in", UserSessionController, :create

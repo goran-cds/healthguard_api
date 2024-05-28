@@ -43,6 +43,13 @@ defmodule HealthguardApi.Users do
     |> Repo.ok_error()
   end
 
+  def get_all_users() do
+    from(u in User)
+    |> preload(medic_profile: [:pacients], pacient_profile: [:medic_profile])
+    |> Repo.all()
+    |> Repo.ok_error()
+  end
+
   def get_pacient(id) do
     from(u in User, where: u.id == ^id)
     |> join(:left, [u], pp in PacientProfile, on: pp.user_id == u.id)
