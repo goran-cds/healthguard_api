@@ -28,9 +28,7 @@ defmodule HealthguardApiWeb.Router do
 
     forward "/graphql", Absinthe.Plug, schema: HealthguardApiWeb.Schema
 
-    if Mix.env() == :dev do
-      forward "/graphiql", Absinthe.Plug.GraphiQL, schema: HealthguardApiWeb.Schema
-    end
+    forward "/graphiql", Absinthe.Plug.GraphiQL, schema: HealthguardApiWeb.Schema
   end
 
   scope "/", HealthguardApiWeb do
