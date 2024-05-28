@@ -349,10 +349,12 @@ defmodule HealthguardApiWeb.Resolvers.UserResolver do
 
   def update_pacient_activity_type(
         _,
-        %{pacient_id: pacient_profile_id, activity_type: activity_type},
+        %{token: token, activity_type: activity_type},
         _
       ) do
-    with {:ok, pacient_profile} <- Users.get_pacient_profile(pacient_profile_id),
+    user = Users.get_user_by_token(token)
+
+    with {:ok, pacient_profile} <- Users.get_pacient_profile(user.pacient_profile.id),
          {:ok, updated_pacient_profile} <-
            Users.update_pacient_profile(pacient_profile, %{
              activity_type: %{type: activity_type.type}

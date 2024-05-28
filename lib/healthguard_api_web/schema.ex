@@ -164,7 +164,7 @@ defmodule HealthguardApiWeb.Schema do
 
     @desc "Update a pacient's current activity"
     field :update_pacient_activity_type, :user_type do
-      arg(:pacient_id, non_null(:id))
+      arg(:token, non_null(:string))
       arg(:activity_type, non_null(:activity_type_input))
       resolve(&Resolvers.UserResolver.update_pacient_activity_type/3)
     end
