@@ -166,7 +166,10 @@ defmodule HealthguardApiWeb.Resolvers.UserResolver do
 
     pacient_params = %{
       cnp: attrs.pacient_profile.cnp,
-      age: age
+      age: age,
+      activity_type: %{
+        type: :sedentary
+      }
     }
 
     medic_email = attrs.medic_email
