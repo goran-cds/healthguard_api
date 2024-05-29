@@ -447,7 +447,11 @@ defmodule HealthguardApi.Users do
       if total_days == 0 do
         100
       else
-        trunc(passed_days / total_days * 100)
+        if passed_days < 0 do
+          0
+        else
+          trunc(passed_days / total_days * 100)
+        end
       end
     end
 
@@ -481,6 +485,10 @@ defmodule HealthguardApi.Users do
             matching_recommandation.days_duration
           )
       end
+
+      IO.inspect(matching_recommandation.start_date, label: "matching start")
+      IO.inspect(end_date, label: "normal end")
+      IO.inspect(Date.utc_today(), label: "current")
 
     %{
       type: pacient_data.activity_type.type,
