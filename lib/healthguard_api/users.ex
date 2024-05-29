@@ -486,10 +486,6 @@ defmodule HealthguardApi.Users do
           )
       end
 
-      IO.inspect(matching_recommandation.start_date, label: "matching start")
-      IO.inspect(end_date, label: "normal end")
-      IO.inspect(Date.utc_today(), label: "current")
-
     %{
       type: pacient_data.activity_type.type,
       end_date: end_date,
