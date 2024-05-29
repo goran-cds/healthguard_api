@@ -17,6 +17,6 @@ defmodule HealthguardApi.Users.Recommandation do
   def changeset(%Recommandation{} = recommandation, attrs) do
     recommandation
     |> cast(attrs, [:recommandation, :days_duration, :note, :start_date])
-    |> validate_required([:days_duration, :note, :start_date])
+    |> validate_required([:recommandation, :days_duration, :start_date])
   end
 end

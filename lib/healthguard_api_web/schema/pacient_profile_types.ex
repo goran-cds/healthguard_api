@@ -78,6 +78,7 @@ defmodule HealthguardApiWeb.Schema.PacientProfileTypes do
     field :start_date, non_null(:datetime)
     field :note, non_null(:string)
     field :days_duration, non_null(:integer)
+    field :activity_type, non_null(:activity_type_input)
   end
 
   input_object :add_alert_input_type do

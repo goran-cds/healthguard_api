@@ -276,7 +276,10 @@ defmodule HealthguardApiWeb.Resolvers.UserResolver do
       recommandation: attrs.recommandation,
       start_date: attrs.start_date,
       note: attrs.note,
-      days_duration: attrs.days_duration
+      days_duration: attrs.days_duration,
+      activity_type: %{
+        type: attrs.activity_type.type
+      }
     }
 
     {:ok, pacient_profile} =
