@@ -490,9 +490,9 @@ defmodule HealthguardApi.Users do
       type: pacient_data.activity_type.type,
       end_date: end_date,
       completed_percentage:
-        case end_date do
-          nil -> 0
-          end_date -> compute_completed_percentage.(matching_recommandation.start_date, end_date)
+        case not is_nil(end_date) and not is_nil(matching_recommandation) do
+          false -> 0
+          true -> compute_completed_percentage.(matching_recommandation.start_date, end_date)
         end
     }
   end
