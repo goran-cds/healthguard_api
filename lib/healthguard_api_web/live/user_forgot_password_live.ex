@@ -32,12 +32,12 @@ defmodule HealthguardApiWeb.UserForgotPasswordLive do
   end
 
   def handle_event("send_email", %{"user" => %{"email" => email}}, socket) do
-    if user = Users.get_user_by_email(email) do
-      Users.deliver_user_reset_password_instructions(
-        user,
-        &url(~p"/users/reset_password/#{&1}")
-      )
-    end
+    {:ok, user} = Users.get_user_by_email(email)
+
+    Users.deliver_user_reset_password_instructions(
+      user,
+      &url(~p"/users/reset_password/#{&1}")
+    )
 
     info =
       "If your email is in our system, you will receive instructions to reset your password shortly."
