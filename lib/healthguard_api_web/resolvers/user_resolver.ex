@@ -210,6 +210,9 @@ defmodule HealthguardApiWeb.Resolvers.UserResolver do
         city: attrs.pacient_profile.address.city,
         street: attrs.pacient_profile.address.street,
         street_number: attrs.pacient_profile.address.street_number
+      },
+      activity_type: %{
+        type: :sedentary
       }
     }
 
