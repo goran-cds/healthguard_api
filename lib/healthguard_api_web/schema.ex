@@ -168,5 +168,17 @@ defmodule HealthguardApiWeb.Schema do
       arg(:activity_type, non_null(:activity_type_input))
       resolve(&Resolvers.UserResolver.update_pacient_activity_type/3)
     end
+
+    @desc "Accept a pacient request"
+    field :accept_pacient_request, :user_type do
+      arg(:pacient_id, non_null(:id))
+      resolve(&Resolvers.UserResolver.accept_pacient_request/3)
+    end
+
+    @desc "Reject a pacient request"
+    field :reject_pacient_request, :user_type do
+      arg(:pacient_id, non_null(:id))
+      resolve(&Resolvers.UserResolver.reject_pacient_request/3)
+    end
   end
 end

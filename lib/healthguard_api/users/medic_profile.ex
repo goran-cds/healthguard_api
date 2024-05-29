@@ -16,7 +16,7 @@ defmodule HealthguardApi.Users.MedicProfile do
   end
 
   @doc false
-  def changeset(medic_profile, attrs) do
+  def changeset(medic_profile, attrs \\ %{}) do
     medic_profile
     |> cast(attrs, [:badge_number])
     |> cast_assoc(:user)

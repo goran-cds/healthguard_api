@@ -75,11 +75,50 @@ alias HealthguardApi.Users
     age: 30
   })
 
-{:ok, _pacient_profile} = Users.associate_pacient_with_medic(pacient_profile1.id, medic_profile1)
+{:ok, user6} =
+  Users.create_user(%{
+    email: "veronica.phantom@gmail.com",
+    password: "Parola1234!@#",
+    first_name: "Veronica",
+    last_name: "Phantom",
+    phone_number: "1234567890"
+  })
 
-{:ok, _pacient_profile} = Users.associate_pacient_with_medic(pacient_profile2.id, medic_profile1)
+{:ok, pacient_profile4} =
+  Users.create_pacient_profile(user6, %{
+    cnp: "8753992387324",
+    age: 67
+  })
 
-{:ok, _pacient_profile} = Users.associate_pacient_with_medic(pacient_profile3.id, medic_profile2)
+{:ok, user7} =
+  Users.create_user(%{
+    email: "bob.craig@gmail.com",
+    password: "Parola1234!@#",
+    first_name: "Bob",
+    last_name: "Craig",
+    phone_number: "1234567890"
+  })
+
+{:ok, pacient_profile5} =
+  Users.create_pacient_profile(user7, %{
+    cnp: "9812345609201",
+    age: 55
+  })
+
+{:ok, _pacient_profile} =
+  Users.associate_pacient_with_medic(pacient_profile1.id, medic_profile1, :confirmed)
+
+{:ok, _pacient_profile} =
+  Users.associate_pacient_with_medic(pacient_profile2.id, medic_profile1, :confirmed)
+
+{:ok, _pacient_profile} =
+  Users.associate_pacient_with_medic(pacient_profile4.id, medic_profile1, :pending)
+
+{:ok, _pacient_profile} =
+  Users.associate_pacient_with_medic(pacient_profile5.id, medic_profile1, :pending)
+
+{:ok, _pacient_profile} =
+  Users.associate_pacient_with_medic(pacient_profile3.id, medic_profile2, :confirmed)
 
 # Pacient Mario Rossi - his default activity is SEDENTARY
 

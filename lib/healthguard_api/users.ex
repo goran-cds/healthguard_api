@@ -159,6 +159,7 @@ defmodule HealthguardApi.Users do
 
   def get_medic_profile(medic_profile_id) do
     from(mp in MedicProfile, where: mp.id == ^medic_profile_id)
+    |> preload([:pacients])
     |> Repo.one()
     |> Repo.ok_error()
   end
@@ -185,15 +186,33 @@ defmodule HealthguardApi.Users do
     end)
   end
 
-  def associate_pacient_with_medic(pacient_profile_id, medic_profile) do
+  def associate_pacient_with_medic(pacient_profile_id, medic_profile, state) do
     with {:ok, pacient_profile} <- get_pacient_profile(pacient_profile_id),
          {:ok, updated_pacient_profile} <-
            pacient_profile
-           |> PacientProfile.changeset(%{state: :confirmed})
+           |> PacientProfile.changeset(%{state: state})
            |> Ecto.Changeset.put_assoc(:medic_profile, medic_profile)
            |> Repo.update() do
       {:ok, updated_pacient_profile}
     end
+  end
+
+  def remove_associate_pacient_with_medic(pacient_profile_id) do
+    {:ok, pacient_profile} = get_pacient_profile(pacient_profile_id)
+    {:ok, medic_profile} = get_medic_profile(pacient_profile.medic_profile_id)
+
+    list_of_pacients =
+      medic_profile.pacients |> Enum.filter(fn pacient -> pacient.id != pacient_profile.id end)
+
+    medic_profile
+    |> MedicProfile.changeset()
+    |> Ecto.Changeset.put_assoc(:pacients, list_of_pacients)
+
+    {:ok, _updated_pacient_profile} =
+      pacient_profile
+      |> PacientProfile.changeset(%{medic_profile_id: nil})
+      |> Ecto.Changeset.put_assoc(:medic_profile, nil)
+      |> Repo.update()
   end
 
   def add_recommandation_to_pacient(pacient_profile_id, params) do

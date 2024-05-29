@@ -179,7 +179,7 @@ defmodule HealthguardApiWeb.Resolvers.UserResolver do
          {:ok, medic_profile} <-
            Users.get_medic_profile(medic_user.medic_profile.id),
          {:ok, _} <-
-           Users.associate_pacient_with_medic(pacient_profile.id, medic_profile),
+           Users.associate_pacient_with_medic(pacient_profile.id, medic_profile, :pending),
          {:ok, user} <- Users.authenticate_user(attrs),
          {:ok, jwt_token, _} <- Guardian.encode_and_sign(user) do
       Users.create_user_token(user.id, jwt_token)
@@ -226,7 +226,7 @@ defmodule HealthguardApiWeb.Resolvers.UserResolver do
          {:ok, medic_profile} <-
            Users.get_medic_profile(medic_user.medic_profile.id),
          {:ok, _} <-
-           Users.associate_pacient_with_medic(pacient_profile.id, medic_profile) do
+           Users.associate_pacient_with_medic(pacient_profile.id, medic_profile, :confirmed) do
       Users.get_user(user.id)
     else
       {:error, msg} ->
@@ -365,5 +365,20 @@ defmodule HealthguardApiWeb.Resolvers.UserResolver do
            }) do
       Users.get_user(updated_pacient_profile.user_id)
     end
+  end
+
+  def accept_pacient_request(_, %{pacient_id: pacient_id}, _) do
+    with {:ok, pacient_profile} <- Users.get_pacient_profile(pacient_id),
+         {:ok, updated_pacient_profile} <-
+           Users.update_pacient_profile(pacient_profile, %{
+             state: :confirmed
+           }) do
+      Users.get_user(updated_pacient_profile.user_id)
+    end
+  end
+
+  def reject_pacient_request(_, %{pacient_id: pacient_id}, _) do
+    {:ok, updated_pacient_profile} = Users.remove_associate_pacient_with_medic(pacient_id)
+    Users.get_user(updated_pacient_profile.user_id)
   end
 end
