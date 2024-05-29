@@ -93,10 +93,10 @@ defmodule HealthguardApiWeb.Router do
     end
   end
 
-  defp admin_basic_auth(conn, _opts) do
-    credentials = Credentials.get_admin_credentials()
-    username = credentials.admin_username
-    password = credentials.admin_password
-    Plug.BasicAuth.basic_auth(conn, username: username, password: password)
-  end
+  # defp admin_basic_auth(conn, _opts) do
+  #   credentials = Credentials.get_admin_credentials()
+  #   username = credentials.admin_username
+  #   password = credentials.admin_password
+  #   Plug.BasicAuth.basic_auth(conn, username: username, password: password)
+  # end
 end
