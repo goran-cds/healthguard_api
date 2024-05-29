@@ -11,7 +11,7 @@ defmodule HealthguardApiWeb.Endpoint do
     same_site: "Lax"
   ]
 
-  plug CORSPlug
+  # plug CORSPlug
 
   socket "/live", Phoenix.LiveView.Socket,
     websocket: [connect_info: [session: @session_options]],
