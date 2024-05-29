@@ -444,10 +444,14 @@ defmodule HealthguardApi.Users do
       total_days = Date.diff(end_date, start_date)
       passed_days = Date.diff(current_date, start_date)
 
-      if total_days == 0 do
-        100
+      if passed_days < 0 do
+        0
       else
-        trunc(passed_days / total_days * 100)
+        if total_days == 0 do
+          100
+        else
+          trunc(passed_days / total_days * 100)
+        end
       end
     end
 
