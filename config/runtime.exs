@@ -94,10 +94,10 @@ if config_env() == :prod do
     admin_password: admin_password
 
   # Configures CORS Plug
-  config :cors_plug,
-    origin: production_server,
-    max_age: 86400,
-    methods: ["GET", "POST"]
+  # config :cors_plug,
+  #   origin: production_server,
+  #   max_age: 86400,
+  #   methods: ["GET", "POST"]
 
   # Configure Guardian
   config :healthguard_api, HealthguardApi.Guardian,
